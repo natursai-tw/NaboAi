@@ -261,7 +261,7 @@ function SortableItem({
           <img
             src={item.imageUrl}
             alt=""
-            className="w-full h-[38px] object-cover rounded-[6px]"
+            className="w-full h-auto block rounded-[6px]"
           />
         ) : (
           <p className="text-[9px] text-[#2B3A52] line-clamp-2 leading-[1.4]">
