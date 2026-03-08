@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
-import image_4ad71c793313beb6be7d12942b6b5e3c0720a62b from 'figma:asset/4ad71c793313beb6be7d12942b6b5e3c0720a62b.png'
-import chatIcon from 'figma:asset/74d096f57a8b9dc1ea908311212b278bc0e36835.png';
-import creativeIcon from 'figma:asset/b4cbf609c8e833093c5932700b1ddfad0ae7b369.png';
-import reportIcon from 'figma:asset/67aa282455554d9e8f0bd60270b186303c8ed287.png';
-import courseIcon from 'figma:asset/cc1c1bf9544c3438487602e4e3f94c91c63fce7c.png';
+import image_4ad71c793313beb6be7d12942b6b5e3c0720a62b from '../../assets/4ad71c793313beb6be7d12942b6b5e3c0720a62b.png'
+import chatIcon from '../../assets/74d096f57a8b9dc1ea908311212b278bc0e36835.png';
+import creativeIcon from '../../assets/b4cbf609c8e833093c5932700b1ddfad0ae7b369.png';
+import reportIcon from '../../assets/67aa282455554d9e8f0bd60270b186303c8ed287.png';
+import courseIcon from '../../assets/cc1c1bf9544c3438487602e4e3f94c91c63fce7c.png';
 import settingSvg from '../../imports/setting.svg';
 import shopBagSvg from '../../imports/shop-bag-1.svg';
 

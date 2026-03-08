@@ -1,5 +1,5 @@
-import image_ad9a0be0aca0271395664bfaea4a3c16732d1663 from 'figma:asset/ad9a0be0aca0271395664bfaea4a3c16732d1663.png'
-import avatarImg from 'figma:asset/941a92c659608ffbeb37fe1770ac4272455109af.png';
+import image_ad9a0be0aca0271395664bfaea4a3c16732d1663 from '../../assets/ad9a0be0aca0271395664bfaea4a3c16732d1663.png'
+import avatarImg from '../../assets/941a92c659608ffbeb37fe1770ac4272455109af.png';
 import energySvg from '../../imports/energy-2.svg';
 import plusSvg from '../../imports/plus_q.svg';
 import bellSvg from '../../imports/bell.svg';

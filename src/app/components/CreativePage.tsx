@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import naboMascot from 'figma:asset/559cfa23c202ae2bafadecf045b5807d0bdfb1e6.png';
+import naboMascot from '../../assets/559cfa23c202ae2bafadecf045b5807d0bdfb1e6.png';
 
 interface CreativePageProps {
   onModeSelect?: (mode: 't2i' | 'i2i') => void;

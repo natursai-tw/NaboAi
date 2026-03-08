@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import coinImg from 'figma:asset/ad9a0be0aca0271395664bfaea4a3c16732d1663.png';
+import coinImg from '../../assets/ad9a0be0aca0271395664bfaea4a3c16732d1663.png';
 
 type TabId = 'energy' | 'costume' | 'warehouse';
 

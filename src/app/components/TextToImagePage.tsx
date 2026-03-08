@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import exampleImage from 'figma:asset/715706f9df4e34361f3a9c13819ffcbcb6a714a6.png';
+import exampleImage from '../../assets/715706f9df4e34361f3a9c13819ffcbcb6a714a6.png';
 
 export function TextToImagePage({ onBack }: { onBack: () => void }) {
   const [inputText, setInputText] = useState('');

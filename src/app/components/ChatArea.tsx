@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
-import mascotImg from 'figma:asset/559cfa23c202ae2bafadecf045b5807d0bdfb1e6.png';
-import robotImg from 'figma:asset/4ad71c793313beb6be7d12942b6b5e3c0720a62b.png';
-import exampleImg from 'figma:asset/b7008577ff8399464e36a154dc2603ec45a4101d.png';
+import mascotImg from '../../assets/559cfa23c202ae2bafadecf045b5807d0bdfb1e6.png';
+import robotImg from '../../assets/4ad71c793313beb6be7d12942b6b5e3c0720a62b.png';
+import exampleImg from '../../assets/b7008577ff8399464e36a154dc2603ec45a4101d.png';
 import micIcon from '../../imports/mic.svg';
 import audioIcon from '../../imports/audio.svg';
 import { ScratchTeachingView } from './ScratchTeachingView';
