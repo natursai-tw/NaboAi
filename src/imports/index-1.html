@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Na-Bo AI 創作工坊</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --mint: #6EDCCA;
+    --mint-light: #B8F0E8;
+    --mint-dark: #3DBFAD;
+    --leaf-green: #4CAF7D;
+    --gold: #F5C842;
+    --gold-dark: #E0A800;
+    --coral: #FF7F72;
+    --sky: #B3E5FC;
+    --sky-dark: #5EC0DE;
+    --navy: #1A2E4A;
+    --navy-mid: #2E3B5E;
+    --orange: #FF8C42;
+    --orange-light: #FFD4B3;
+    --text-main: #2B3A52;
+    --text-soft: #7A8BA0;
+    --shadow-card: 0 8px 32px rgba(60,120,140,0.13);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans TC', 'Nunito', sans-serif;
+    background: linear-gradient(135deg, #C8F0EA 0%, #DCF0FF 40%, #EEF6FF 70%, #FFF8EE 100%);
+    min-height: 100vh;
+    color: var(--text-main);
+    overflow: hidden;
+  }
+
+  .blob { position: fixed; border-radius: 50%; filter: blur(70px); opacity: 0.18; pointer-events: none; z-index: 0; }
+  .blob-1 { width: 420px; height: 420px; background: var(--mint); top: -120px; left: -100px; animation: blobFloat 8s ease-in-out infinite; }
+  .blob-2 { width: 300px; height: 300px; background: var(--gold); top: 45%; right: -80px; animation: blobFloat 11s ease-in-out infinite reverse; }
+  .blob-3 { width: 250px; height: 250px; background: var(--orange); bottom: -60px; left: 40%; animation: blobFloat 9s ease-in-out infinite 1.5s; }
+  @keyframes blobFloat {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-28px) scale(1.05); }
+  }
+
+  /* TOP NAV */
+  .topnav {
+    position: relative; z-index: 10;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 28px;
+    background: rgba(255,255,255,0.75);
+    backdrop-filter: blur(16px);
+    border-bottom: 1.5px solid rgba(110,220,202,0.25);
+  }
+  .nav-left { display: flex; align-items: center; gap: 14px; }
+  .avatar-wrap {
+    width: 46px; height: 46px; border-radius: 14px;
+    background: linear-gradient(135deg, var(--mint), var(--sky-dark));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; box-shadow: 0 4px 12px rgba(62,191,173,0.35);
+    position: relative;
+  }
+  .avatar-wrap .badge {
+    position: absolute; bottom: -4px; right: -4px;
+    background: var(--gold); color: var(--navy);
+    font-size: 9px; font-weight: 900; padding: 2px 5px; border-radius: 6px;
+    font-family: 'Nunito'; border: 2px solid white;
+  }
+  .student-info .name { font-weight: 800; font-size: 14px; color: var(--navy); }
+  .student-info .class { font-size: 11px; color: var(--text-soft); font-weight: 600; }
+  .stat-pills { display: flex; align-items: center; gap: 16px; }
+  .stat-pill {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.9); border-radius: 20px;
+    padding: 6px 14px; box-shadow: 0 4px 14px rgba(60,120,140,0.08);
+  }
+  .stat-label { font-size: 11px; color: var(--text-soft); font-weight: 700; }
+  .stat-bar-wrap { width: 90px; height: 9px; background: #E8F4F8; border-radius: 99px; overflow: hidden; }
+  .stat-bar.energy { height: 100%; background: linear-gradient(90deg, var(--mint-dark), var(--mint)); width: 85%; border-radius: 99px; }
+  .stat-bar.mood { height: 100%; background: linear-gradient(90deg, var(--gold), #FF9F5A); width: 72%; border-radius: 99px; }
+  .stat-val { font-size: 12px; font-weight: 800; color: var(--navy); }
+  .nav-right { display: flex; align-items: center; gap: 10px; }
+  .coin-display {
+    display: flex; align-items: center; gap: 6px;
+    background: linear-gradient(135deg, #FFF3CC, #FFE680);
+    border-radius: 20px; padding: 7px 16px;
+    font-weight: 900; font-size: 15px; color: #8B6A00;
+    box-shadow: 0 3px 10px rgba(245,200,66,0.3);
+  }
+  .icon-btn {
+    width: 38px; height: 38px; border-radius: 12px;
+    background: rgba(255,255,255,0.8); border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; box-shadow: 0 4px 14px rgba(60,120,140,0.08);
+    transition: transform 0.2s;
+  }
+  .icon-btn:hover { transform: translateY(-2px); }
+
+  /* LAYOUT */
+  .main-layout {
+    position: relative; z-index: 1;
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    height: calc(100vh - 74px);
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    background: rgba(255,255,255,0.65);
+    backdrop-filter: blur(14px);
+    border-right: 1.5px solid rgba(110,220,202,0.2);
+    display: flex; flex-direction: column;
+    align-items: center; padding: 20px 0; gap: 10px;
+  }
+  .logo-mark {
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, var(--leaf-green), var(--mint-dark));
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 900; font-size: 11px; letter-spacing: -0.5px;
+    margin-bottom: 8px; box-shadow: 0 4px 14px rgba(76,175,125,0.4);
+  }
+  .nav-icon {
+    width: 50px; height: 50px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; cursor: pointer; transition: all 0.25s; position: relative;
+  }
+  .nav-icon:hover { transform: scale(1.1); }
+  .nav-icon.active {
+    background: linear-gradient(135deg, var(--mint), var(--sky-dark));
+    box-shadow: 0 4px 16px rgba(94,192,222,0.4);
+  }
+  .nav-icon .tooltip {
+    position: absolute; left: 60px;
+    background: var(--navy); color: white;
+    font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 8px;
+    white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s;
+  }
+  .nav-icon:hover .tooltip { opacity: 1; }
+
+  /* CENTER CONTENT */
+  .content-area {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 32px 48px;
+    gap: 32px;
+    position: relative;
+  }
+
+  /* Page title */
+  .page-header {
+    text-align: center;
+    animation: fadeDown 0.6s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+  @keyframes fadeDown {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .page-header .tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.8);
+    border: 1.5px solid rgba(110,220,202,0.35);
+    border-radius: 20px; padding: 5px 14px;
+    font-size: 12px; font-weight: 800; color: var(--mint-dark);
+    margin-bottom: 10px;
+  }
+  .page-header h1 {
+    font-size: 28px; font-weight: 900; color: var(--navy);
+    letter-spacing: -0.5px;
+  }
+  .page-header p {
+    font-size: 14px; color: var(--text-soft); font-weight: 600;
+    margin-top: 6px;
+  }
+
+  /* Mode cards grid */
+  .mode-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    width: 100%;
+    max-width: 900px;
+    animation: fadeUp 0.7s cubic-bezier(0.34,1.56,0.64,1) 0.2s both;
+  }
+  @keyframes fadeUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  .mode-card {
+    background: rgba(255,255,255,0.78);
+    backdrop-filter: blur(20px);
+    border-radius: 28px;
+    border: 2px solid rgba(255,255,255,0.9);
+    box-shadow: var(--shadow-card);
+    padding: 32px 28px 24px;
+    display: flex; flex-direction: column;
+    align-items: center;
+    gap: 0;
+    cursor: pointer;
+    transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mode-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    opacity: 0;
+    transition: opacity 0.3s;
+    border-radius: 28px;
+  }
+  .mode-card.t2i::before { background: radial-gradient(ellipse at 50% 0%, rgba(255,140,66,0.12) 0%, transparent 70%); }
+  .mode-card.i2i::before { background: radial-gradient(ellipse at 50% 0%, rgba(26,46,74,0.10) 0%, transparent 70%); }
+
+  .mode-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 60px rgba(60,120,140,0.2);
+    border-color: rgba(255,255,255,1);
+  }
+  .mode-card:hover::before { opacity: 1; }
+
+  /* Card illustration area */
+  .card-illustration {
+    width: 100%;
+    height: 180px;
+    border-radius: 20px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card-illustration.t2i-bg {
+    background: linear-gradient(135deg, #FFF8F0 0%, #FFE8D0 100%);
+    border: 1.5px solid rgba(255,140,66,0.15);
+  }
+  .card-illustration.i2i-bg {
+    background: linear-gradient(135deg, #EEF6FF 0%, #D4EAFF 100%);
+    border: 1.5px solid rgba(94,192,222,0.2);
+  }
+
+  /* T2I illustration */
+  .t2i-scene {
+    display: flex; align-items: center; gap: 16px;
+    padding: 16px;
+  }
+  .doc-stack {
+    position: relative; width: 80px; flex-shrink: 0;
+  }
+  .doc-sheet {
+    width: 68px; height: 82px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+    position: absolute;
+    display: flex; flex-direction: column; padding: 8px 7px; gap: 4px;
+  }
+  .doc-sheet:nth-child(1) { transform: rotate(-6deg) translate(-8px, 4px); }
+  .doc-sheet:nth-child(2) { transform: rotate(-2deg) translate(-3px, 2px); }
+  .doc-sheet.front { position: relative; transform: none; z-index: 3; }
+  .doc-line { height: 5px; background: #E8EFF5; border-radius: 3px; }
+  .doc-line:nth-child(1) { width: 80%; background: #CBD8E5; }
+  .doc-line:nth-child(2) { width: 100%; }
+  .doc-line:nth-child(3) { width: 90%; }
+  .doc-line:nth-child(4) { width: 70%; }
+  .pencil-badge {
+    position: absolute; top: -12px; right: -12px;
+    width: 32px; height: 32px; border-radius: 10px;
+    background: linear-gradient(135deg, #FFD4A0, #FFA040);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; z-index: 5;
+    box-shadow: 0 3px 10px rgba(255,140,66,0.35);
+  }
+
+  .arrow-flow {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    flex-shrink: 0;
+  }
+  .arrow-svg { width: 48px; }
+
+  .result-image {
+    width: 100px; height: 80px;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    flex-shrink: 0;
+  }
+  .result-image img { width: 100%; height: 100%; object-fit: cover; }
+  .result-image-placeholder {
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg, #87CEEB, #98D8A0, #F4D03F);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+  }
+
+  /* I2I illustration */
+  .i2i-scene {
+    display: flex; align-items: center; gap: 10px;
+    padding: 16px;
+    position: relative;
+  }
+  .ai-chip {
+    position: absolute; top: 10px; right: 16px;
+    display: flex; align-items: center; gap: 4px;
+    background: linear-gradient(135deg, #1A7FBF, #0E5A8A);
+    color: white; font-weight: 900; font-size: 14px;
+    padding: 6px 10px; border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(14,90,138,0.4);
+    letter-spacing: 0.5px;
+  }
+  .img-card {
+    border-radius: 12px; overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    border: 2px solid white;
+  }
+  .img-card-placeholder {
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+  }
+  .img-card-front { width: 90px; height: 72px; }
+  .img-card-back { width: 90px; height: 72px; position: relative; }
+  .img-card-back2 {
+    width: 85px; height: 68px;
+    position: absolute; top: -6px; left: -6px;
+    opacity: 0.6;
+  }
+  .blue-arrow {
+    display: flex; flex-direction: column; gap: 5px; align-items: center;
+    flex-shrink: 0;
+  }
+  .arrow-line {
+    width: 44px; height: 10px; border-radius: 5px;
+  }
+  .arrow-line.top { background: linear-gradient(90deg, #5EC0DE, #1A7FBF); }
+  .arrow-line.bot { background: linear-gradient(90deg, #1A7FBF, #5EC0DE); transform: scaleX(-1); }
+
+  /* Card label & button */
+  .card-label {
+    font-size: 22px; font-weight: 900;
+    color: var(--navy);
+    margin-bottom: 4px;
+    letter-spacing: -0.3px;
+  }
+  .card-desc {
+    font-size: 12px; font-weight: 600;
+    color: var(--text-soft);
+    text-align: center;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+
+  .cta-btn {
+    width: 100%;
+    padding: 16px 0;
+    border-radius: 18px;
+    border: none; cursor: pointer;
+    font-size: 18px; font-weight: 900;
+    font-family: 'Noto Sans TC', sans-serif;
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    letter-spacing: 0.5px;
+    position: relative; overflow: hidden;
+  }
+  .cta-btn::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: rgba(255,255,255,0.12);
+    opacity: 0; transition: opacity 0.2s;
+  }
+  .cta-btn:hover::after { opacity: 1; }
+  .cta-btn:hover { transform: scale(1.04); }
+  .cta-btn:active { transform: scale(0.97); }
+
+  .cta-btn.t2i-btn {
+    background: linear-gradient(135deg, #F5C842, #E0A800);
+    color: white;
+    box-shadow: 0 8px 28px rgba(224,168,0,0.4);
+  }
+  .cta-btn.i2i-btn {
+    background: linear-gradient(135deg, var(--navy-mid), var(--navy));
+    color: white;
+    box-shadow: 0 8px 28px rgba(26,46,74,0.35);
+  }
+
+  .cta-arrow {
+    width: 30px; height: 30px; border-radius: 10px;
+    background: rgba(255,255,255,0.25);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+
+  /* Feature pills under buttons */
+  .feature-pills {
+    display: flex; gap: 6px; justify-content: center;
+    margin-top: 12px; flex-wrap: wrap;
+  }
+  .fpill {
+    font-size: 10px; font-weight: 800;
+    padding: 3px 10px; border-radius: 10px;
+  }
+  .fpill.t2i-pill { background: rgba(245,200,66,0.15); color: #8B6A00; }
+  .fpill.i2i-pill { background: rgba(26,46,74,0.08); color: var(--navy-mid); }
+
+  /* Mascot */
+  .mascot-float {
+    position: absolute;
+    bottom: 20px; left: 120px;
+    animation: mascotBounce 3s ease-in-out infinite;
+    z-index: 5;
+  }
+  @keyframes mascotBounce {
+    0%, 100% { transform: translateY(0) rotate(-3deg); }
+    50% { transform: translateY(-12px) rotate(3deg); }
+  }
+
+  /* Floating sparks */
+  .spark {
+    position: absolute; pointer-events: none;
+    animation: sparkFloat 4s ease-in-out infinite;
+    font-size: 16px;
+  }
+  .spark:nth-child(1) { top: 12%; left: 22%; animation-delay: 0s; }
+  .spark:nth-child(2) { top: 18%; right: 18%; animation-delay: 1.2s; font-size: 12px; }
+  .spark:nth-child(3) { bottom: 28%; right: 22%; animation-delay: 2.4s; font-size: 14px; }
+  @keyframes sparkFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.6; }
+    50% { transform: translateY(-14px) rotate(25deg); opacity: 1; }
+  }
+
+  /* Bottom breadcrumb */
+  .breadcrumb {
+    position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11px; font-weight: 700; color: var(--text-soft);
+    background: rgba(255,255,255,0.7);
+    padding: 6px 16px; border-radius: 20px;
+    backdrop-filter: blur(8px);
+  }
+  .bc-sep { opacity: 0.4; }
+  .bc-current { color: var(--navy); font-weight: 900; }
+</style>
+</head>
+<body>
+
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <div class="nav-left">
+    <div class="avatar-wrap">🎓<div class="badge">VIP</div></div>
+    <div class="student-info">
+      <div class="name">玩閱讀・林小明</div>
+      <div class="class">110-1 學生</div>
+    </div>
+  </div>
+  <div class="stat-pills">
+    <div class="stat-pill">
+      <span class="stat-label">⚡ 能量值</span>
+      <div class="stat-bar-wrap"><div class="stat-bar energy"></div></div>
+      <span class="stat-val">85</span>
+    </div>
+    <div class="stat-pill">
+      <span class="stat-label">😊 心情</span>
+      <div class="stat-bar-wrap"><div class="stat-bar mood"></div></div>
+      <span class="stat-val">開心</span>
+    </div>
+  </div>
+  <div class="nav-right">
+    <div class="coin-display">🪙 1,200</div>
+    <button class="icon-btn">➕</button>
+    <button class="icon-btn">⚙️</button>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo-mark">Na<br>-Bo</div>
+    <div class="nav-icon">🤖<span class="tooltip">AI 夥伴</span></div>
+    <div class="nav-icon">💬<span class="tooltip">聊天室</span></div>
+    <div class="nav-icon active">🏆<span class="tooltip">創作工坊</span></div>
+    <div class="nav-icon">📊<span class="tooltip">學習報告</span></div>
+    <div class="nav-icon">📚<span class="tooltip">課程</span></div>
+    <div style="flex:1"></div>
+    <div class="nav-icon">👨‍👩‍👧<span class="tooltip">家長觀察</span></div>
+  </aside>
+
+  <!-- CONTENT -->
+  <section class="content-area">
+
+    <!-- Floating sparks -->
+    <span class="spark">✨</span>
+    <span class="spark">⭐</span>
+    <span class="spark">💫</span>
+
+    <!-- Page header -->
+    <div class="page-header">
+      <div class="tag">🎨 AI 創作工坊</div>
+      <h1>選擇你的創作方式</h1>
+      <p>用文字描述，或上傳圖片，讓 AI 幫你創造獨一無二的作品！</p>
+    </div>
+
+    <!-- Mode cards -->
+    <div class="mode-grid">
+
+      <!-- TEXT TO IMAGE -->
+      <div class="mode-card t2i" onclick="selectMode('t2i', this)">
+
+        <div class="card-illustration t2i-bg">
+          <div class="t2i-scene">
+            <!-- Document stack -->
+            <div class="doc-stack">
+              <div class="doc-sheet">
+                <div class="doc-line"></div><div class="doc-line"></div><div class="doc-line"></div>
+              </div>
+              <div class="doc-sheet">
+                <div class="doc-line"></div><div class="doc-line"></div><div class="doc-line"></div>
+              </div>
+              <div class="doc-sheet front">
+                <div class="doc-line"></div><div class="doc-line"></div>
+                <div class="doc-line"></div><div class="doc-line"></div>
+              </div>
+              <div class="pencil-badge">✏️</div>
+            </div>
+
+            <!-- Arrow -->
+            <div class="arrow-flow">
+              <svg class="arrow-svg" viewBox="0 0 60 24" fill="none">
+                <defs>
+                  <linearGradient id="arrowGrad1" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#FF8C42"/>
+                    <stop offset="100%" stop-color="#F5C842"/>
+                  </linearGradient>
+                </defs>
+                <path d="M4 12 L46 12" stroke="url(#arrowGrad1)" stroke-width="4" stroke-linecap="round"/>
+                <path d="M40 4 L52 12 L40 20" stroke="url(#arrowGrad1)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              </svg>
+              <div style="font-size:10px; font-weight:800; color:#E07A00; letter-spacing:0.5px;">AI 生成</div>
+            </div>
+
+            <!-- Result image -->
+            <div class="result-image">
+              <div class="result-image-placeholder">🏝️</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-label">文生圖</div>
+        <div class="card-desc">
+          描述你想要的畫面<br>
+          AI 幫你把文字變成圖片
+        </div>
+
+        <button class="cta-btn t2i-btn" onclick="selectMode('t2i')">
+          文生圖
+          <div class="cta-arrow">➜</div>
+        </button>
+
+        <div class="feature-pills">
+          <span class="fpill t2i-pill">✍️ 文字描述</span>
+          <span class="fpill t2i-pill">🎨 風格選擇</span>
+          <span class="fpill t2i-pill">⚡ 快速生成</span>
+        </div>
+
+      </div>
+
+      <!-- IMAGE TO IMAGE -->
+      <div class="mode-card i2i" onclick="selectMode('i2i', this)">
+
+        <div class="card-illustration i2i-bg">
+          <div class="i2i-scene">
+
+            <div class="ai-chip">
+              <span style="font-size:18px">🤖</span> AI
+            </div>
+
+            <!-- Input image -->
+            <div style="position:relative; flex-shrink:0;">
+              <div class="img-card img-card-back2" style="background: linear-gradient(135deg,#7EC8E3,#5AABB8);">
+                <div class="img-card-placeholder" style="height:100%">🏔️</div>
+              </div>
+              <div class="img-card img-card-front" style="background: linear-gradient(135deg,#5EC0DE,#3A9FBC); position:relative; z-index:2;">
+                <div class="img-card-placeholder" style="height:100%">🌄</div>
+              </div>
+            </div>
+
+            <!-- Blue arrows -->
+            <div class="blue-arrow" style="flex-shrink:0;">
+              <svg width="56" height="32" viewBox="0 0 56 32" fill="none">
+                <defs>
+                  <linearGradient id="blueArrow" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#5EC0DE"/>
+                    <stop offset="100%" stop-color="#1A7FBF"/>
+                  </linearGradient>
+                </defs>
+                <path d="M4 10 L42 10" stroke="url(#blueArrow)" stroke-width="3.5" stroke-linecap="round"/>
+                <path d="M36 3 L48 10 L36 17" stroke="url(#blueArrow)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <path d="M52 22 L10 22" stroke="url(#blueArrow)" stroke-width="3.5" stroke-linecap="round" opacity="0.55"/>
+                <path d="M16 15 L4 22 L16 29" stroke="url(#blueArrow)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.55"/>
+              </svg>
+            </div>
+
+            <!-- Output images -->
+            <div style="display:flex; flex-direction:column; gap:6px; flex-shrink:0; position:relative;">
+              <div class="img-card" style="width:88px; height:62px; background: linear-gradient(135deg,#6EDCCA,#3DBFAD);">
+                <div class="img-card-placeholder" style="height:100%">🌿</div>
+              </div>
+              <div class="img-card" style="width:88px; height:62px; background: linear-gradient(135deg,#A8D8FF,#5EC0DE);">
+                <div class="img-card-placeholder" style="height:100%">🏞️</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-label">圖生圖</div>
+        <div class="card-desc">
+          上傳一張圖片當參考<br>
+          AI 幫你創作出新的風格
+        </div>
+
+        <button class="cta-btn i2i-btn" onclick="selectMode('i2i')">
+          圖生圖
+          <div class="cta-arrow">➜</div>
+        </button>
+
+        <div class="feature-pills">
+          <span class="fpill i2i-pill">🖼️ 上傳圖片</span>
+          <span class="fpill i2i-pill">🔄 風格轉換</span>
+          <span class="fpill i2i-pill">✨ AI 重繪</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Mascot -->
+    <div class="mascot-float">
+      <svg width="64" height="70" viewBox="0 0 64 70" fill="none">
+        <defs>
+          <radialGradient id="mBody" cx="50%" cy="40%" r="55%">
+            <stop offset="0%" stop-color="#FAFEFF"/>
+            <stop offset="100%" stop-color="#E0F4F0"/>
+          </radialGradient>
+        </defs>
+        <ellipse cx="32" cy="48" rx="22" ry="26" fill="url(#mBody)"/>
+        <ellipse cx="24" cy="20" rx="4" ry="11" fill="#4CAF7D" transform="rotate(-15 24 20)"/>
+        <ellipse cx="40" cy="20" rx="4" ry="11" fill="#2E8B57" transform="rotate(15 40 20)"/>
+        <circle cx="32" cy="36" r="14" fill="url(#mBody)"/>
+        <ellipse cx="27" cy="34" rx="2.8" ry="3" fill="#2B3A52"/>
+        <ellipse cx="37" cy="34" rx="2.8" ry="3" fill="#2B3A52"/>
+        <circle cx="28" cy="33" r="1" fill="white"/>
+        <circle cx="38" cy="33" r="1" fill="white"/>
+        <ellipse cx="23" cy="39" rx="3" ry="2" fill="#FFB3AD" opacity="0.5"/>
+        <ellipse cx="41" cy="39" rx="3" ry="2" fill="#FFB3AD" opacity="0.5"/>
+        <path d="M27 41 Q32 47 37 41" stroke="#2B3A52" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+        <ellipse cx="12" cy="42" rx="6" ry="4.5" fill="#2E3B5E" opacity="0.8"/>
+        <ellipse cx="52" cy="42" rx="6" ry="4.5" fill="#2E3B5E" opacity="0.8"/>
+      </svg>
+    </div>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+      <span>🏠 首頁</span>
+      <span class="bc-sep">›</span>
+      <span>🎨 創作工坊</span>
+      <span class="bc-sep">›</span>
+      <span class="bc-current">選擇模式</span>
+    </div>
+
+  </section>
+</div>
+
+<!-- Modal overlay -->
+<div id="modal" style="
+  display:none; position:fixed; inset:0; z-index:100;
+  background: rgba(26,46,74,0.45);
+  backdrop-filter: blur(8px);
+  align-items:center; justify-content:center;
+" onclick="closeModal()">
+  <div id="modalBox" style="
+    background: white; border-radius: 28px;
+    padding: 36px 32px; max-width: 420px; width: 90%;
+    box-shadow: 0 24px 80px rgba(26,46,74,0.3);
+    animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+    text-align: center;
+  " onclick="event.stopPropagation()">
+    <div id="modalIcon" style="font-size:48px; margin-bottom:14px;"></div>
+    <div id="modalTitle" style="font-size:22px; font-weight:900; color:var(--navy); margin-bottom:8px;"></div>
+    <div id="modalDesc" style="font-size:13px; color:var(--text-soft); font-weight:600; line-height:1.7; margin-bottom:24px;"></div>
+    <button id="modalBtn" style="
+      width:100%; padding:15px; border-radius:16px; border:none;
+      font-size:16px; font-weight:900; cursor:pointer;
+      font-family:'Noto Sans TC'; letter-spacing:0.5px;
+    " onclick="closeModal()">開始創作 ✨</button>
+  </div>
+</div>
+
+<style>
+  @keyframes popIn {
+    from { transform: scale(0.7); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+</style>
+
+<script>
+  function selectMode(mode, card) {
+    const modal = document.getElementById('modal');
+    const icon = document.getElementById('modalIcon');
+    const title = document.getElementById('modalTitle');
+    const desc = document.getElementById('modalDesc');
+    const btn = document.getElementById('modalBtn');
+
+    if (mode === 't2i') {
+      icon.textContent = '✏️';
+      title.textContent = '文生圖模式';
+      desc.innerHTML = '請在下方輸入框描述你想要的圖片，<br>例如：「一隻在森林裡飛翔的蝴蝶，水彩風格」<br><br>AI 將根據你的描述生成獨特的圖片！';
+      btn.style.background = 'linear-gradient(135deg, #F5C842, #E0A800)';
+      btn.style.color = 'white';
+    } else {
+      icon.textContent = '🖼️';
+      title.textContent = '圖生圖模式';
+      desc.innerHTML = '請上傳一張參考圖片，<br>AI 將根據圖片內容進行風格轉換或延伸創作。<br><br>支援 JPG、PNG 格式，最大 5MB。';
+      btn.style.background = 'linear-gradient(135deg, #2E3B5E, #1A2E4A)';
+      btn.style.color = 'white';
+    }
+
+    modal.style.display = 'flex';
+  }
+
+  function closeModal() {
+    document.getElementById('modal').style.display = 'none';
+  }
+
+  // Card hover sparkle effect
+  document.querySelectorAll('.mode-card').forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      card.style.setProperty('--mx', x + '%');
+      card.style.setProperty('--my', y + '%');
+    });
+  });
+
+  // Sidebar nav
+  document.querySelectorAll('.nav-icon').forEach(icon => {
+    icon.addEventListener('click', function() {
+      document.querySelectorAll('.nav-icon').forEach(n => n.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>

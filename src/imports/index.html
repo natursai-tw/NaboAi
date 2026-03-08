@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Na-Bo 學習星球</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --mint: #6EDCCA;
+    --mint-light: #B8F0E8;
+    --mint-dark: #3DBFAD;
+    --cream: #FFF8EE;
+    --warm-white: #FAFCFF;
+    --leaf-green: #4CAF7D;
+    --leaf-dark: #2E8B57;
+    --gold: #F5C842;
+    --gold-light: #FFE380;
+    --coral: #FF7F72;
+    --sky: #B3E5FC;
+    --sky-dark: #5EC0DE;
+    --navy: #1A2E4A;
+    --text-main: #2B3A52;
+    --text-soft: #7A8BA0;
+    --card-bg: rgba(255,255,255,0.85);
+    --shadow-soft: 0 8px 32px rgba(60,120,140,0.12);
+    --shadow-card: 0 4px 20px rgba(60,120,140,0.10);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans TC', 'Nunito', sans-serif;
+    background: linear-gradient(135deg, #C8F0EA 0%, #DCF0FF 40%, #EEF6FF 70%, #FFF8EE 100%);
+    min-height: 100vh;
+    color: var(--text-main);
+    overflow-x: hidden;
+  }
+
+  /* Floating background blobs */
+  .blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.25;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .blob-1 { width: 400px; height: 400px; background: var(--mint); top: -100px; left: -100px; animation: blobFloat 8s ease-in-out infinite; }
+  .blob-2 { width: 300px; height: 300px; background: var(--gold); top: 40%; right: -80px; animation: blobFloat 10s ease-in-out infinite reverse; }
+  .blob-3 { width: 250px; height: 250px; background: var(--coral); bottom: -60px; left: 30%; animation: blobFloat 12s ease-in-out infinite 2s; }
+
+  @keyframes blobFloat {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-30px) scale(1.05); }
+  }
+
+  /* ── TOP NAV ── */
+  .topnav {
+    position: relative; z-index: 10;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 28px;
+    background: rgba(255,255,255,0.75);
+    backdrop-filter: blur(16px);
+    border-bottom: 1.5px solid rgba(110,220,202,0.25);
+  }
+
+  .nav-left { display: flex; align-items: center; gap: 14px; }
+
+  .avatar-wrap {
+    width: 46px; height: 46px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--mint), var(--sky-dark));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    box-shadow: 0 4px 12px rgba(62,191,173,0.35);
+    position: relative;
+  }
+  .avatar-wrap .badge {
+    position: absolute; bottom: -4px; right: -4px;
+    background: var(--gold); color: var(--navy);
+    font-size: 9px; font-weight: 900;
+    padding: 2px 5px; border-radius: 6px;
+    font-family: 'Nunito', sans-serif;
+    border: 2px solid white;
+  }
+
+  .student-info .name {
+    font-weight: 800; font-size: 14px; color: var(--navy);
+  }
+  .student-info .class {
+    font-size: 11px; color: var(--text-soft); font-weight: 600;
+  }
+
+  .stat-pills { display: flex; align-items: center; gap: 16px; }
+
+  .stat-pill {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.9);
+    border-radius: 20px;
+    padding: 6px 14px;
+    box-shadow: var(--shadow-card);
+  }
+  .stat-label { font-size: 11px; color: var(--text-soft); font-weight: 700; }
+
+  .stat-bar-wrap { width: 90px; height: 9px; background: #E8F4F8; border-radius: 99px; overflow: hidden; }
+  .stat-bar { height: 100%; border-radius: 99px; transition: width 1s ease; }
+  .stat-bar.energy { background: linear-gradient(90deg, var(--mint-dark), var(--mint)); width: 85%; }
+  .stat-bar.mood { background: linear-gradient(90deg, var(--gold), #FF9F5A); width: 72%; }
+
+  .stat-val { font-size: 12px; font-weight: 800; color: var(--navy); }
+
+  .nav-right { display: flex; align-items: center; gap: 10px; }
+
+  .coin-display {
+    display: flex; align-items: center; gap: 6px;
+    background: linear-gradient(135deg, #FFF3CC, #FFE680);
+    border-radius: 20px; padding: 7px 16px;
+    font-weight: 900; font-size: 15px; color: #8B6A00;
+    box-shadow: 0 3px 10px rgba(245,200,66,0.3);
+  }
+  .coin-icon { font-size: 18px; }
+
+  .icon-btn {
+    width: 38px; height: 38px; border-radius: 12px;
+    background: rgba(255,255,255,0.8);
+    border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    box-shadow: var(--shadow-card);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .icon-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(60,120,140,0.18); }
+
+  /* ── LAYOUT ── */
+  .main-layout {
+    position: relative; z-index: 1;
+    display: grid;
+    grid-template-columns: 80px 1fr 340px;
+    gap: 0;
+    height: calc(100vh - 74px);
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    background: rgba(255,255,255,0.65);
+    backdrop-filter: blur(14px);
+    border-right: 1.5px solid rgba(110,220,202,0.2);
+    display: flex; flex-direction: column;
+    align-items: center; padding: 20px 0; gap: 10px;
+  }
+
+  .logo-mark {
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, var(--leaf-green), var(--mint-dark));
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 900; font-size: 11px;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+    box-shadow: 0 4px 14px rgba(76,175,125,0.4);
+  }
+
+  .nav-icon {
+    width: 50px; height: 50px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+  }
+  .nav-icon:hover { transform: scale(1.1); }
+  .nav-icon.active {
+    background: linear-gradient(135deg, var(--mint), var(--sky-dark));
+    box-shadow: 0 4px 16px rgba(94,192,222,0.4);
+  }
+  .nav-icon .tooltip {
+    position: absolute; left: 60px;
+    background: var(--navy); color: white;
+    font-size: 11px; font-weight: 700;
+    padding: 4px 10px; border-radius: 8px;
+    white-space: nowrap; opacity: 0; pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .nav-icon:hover .tooltip { opacity: 1; }
+
+  /* ── CENTER STAGE ── */
+  .center-stage {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 24px;
+    position: relative;
+  }
+
+  .scene-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 50% 100%, rgba(110,220,202,0.15) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 30% at 30% 80%, rgba(179,229,252,0.2) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  /* Floor grid */
+  .floor {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 140px;
+    background: linear-gradient(180deg, transparent 0%, rgba(110,220,202,0.08) 100%);
+    border-top: 2px solid rgba(110,220,202,0.15);
+  }
+
+  .mascot-area {
+    position: relative; z-index: 2;
+    display: flex; flex-direction: column; align-items: center;
+    animation: mascotFloat 4s ease-in-out infinite;
+  }
+
+  @keyframes mascotFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-16px); }
+  }
+
+  .mascot-svg {
+    width: 200px; height: 220px;
+    filter: drop-shadow(0 20px 40px rgba(62,191,173,0.3));
+  }
+
+  /* Speech bubble */
+  .speech-bubble {
+    position: absolute; top: -20px; right: -140px;
+    background: white;
+    border-radius: 20px 20px 20px 4px;
+    padding: 12px 16px;
+    max-width: 160px;
+    box-shadow: 0 8px 24px rgba(60,120,140,0.15);
+    font-size: 12px; font-weight: 700; color: var(--text-main);
+    line-height: 1.5;
+    animation: bubblePop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.3s both;
+  }
+  .speech-bubble::before {
+    content: '';
+    position: absolute; left: -10px; bottom: 16px;
+    border: 6px solid transparent;
+    border-right-color: white;
+  }
+  @keyframes bubblePop {
+    from { transform: scale(0.5); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .companion {
+    position: absolute; bottom: 30px; left: -80px;
+    font-size: 60px;
+    animation: companionBounce 2s ease-in-out infinite;
+  }
+  @keyframes companionBounce {
+    0%, 100% { transform: translateY(0) rotate(-5deg); }
+    50% { transform: translateY(-10px) rotate(5deg); }
+  }
+
+  /* Stars floating */
+  .floating-star {
+    position: absolute;
+    font-size: 18px;
+    animation: starFloat 3s ease-in-out infinite;
+    pointer-events: none;
+  }
+  .floating-star:nth-child(1) { top: 15%; left: 15%; animation-delay: 0s; }
+  .floating-star:nth-child(2) { top: 25%; right: 20%; animation-delay: 1s; font-size: 14px; }
+  .floating-star:nth-child(3) { bottom: 35%; left: 10%; animation-delay: 2s; font-size: 12px; }
+  @keyframes starFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.7; }
+    50% { transform: translateY(-12px) rotate(20deg); opacity: 1; }
+  }
+
+  /* ── RIGHT PANEL ── */
+  .right-panel {
+    background: rgba(255,255,255,0.7);
+    backdrop-filter: blur(16px);
+    border-left: 1.5px solid rgba(110,220,202,0.2);
+    padding: 20px 18px;
+    overflow-y: auto;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+
+  /* Tab switcher */
+  .tab-row {
+    display: flex; gap: 6px;
+    background: rgba(110,220,202,0.1);
+    border-radius: 16px;
+    padding: 5px;
+  }
+  .tab {
+    flex: 1; padding: 9px 0;
+    text-align: center;
+    border-radius: 12px;
+    font-size: 12px; font-weight: 800;
+    cursor: pointer;
+    transition: all 0.25s;
+    color: var(--text-soft);
+    display: flex; align-items: center; justify-content: center; gap: 4px;
+  }
+  .tab.active {
+    background: white;
+    color: var(--navy);
+    box-shadow: 0 3px 10px rgba(60,120,140,0.12);
+  }
+
+  /* Mission cards */
+  .section-title {
+    font-size: 13px; font-weight: 900;
+    color: var(--text-soft);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: -4px;
+  }
+
+  .mission-card {
+    background: var(--card-bg);
+    border-radius: 18px;
+    padding: 14px 16px;
+    box-shadow: var(--shadow-card);
+    border: 1.5px solid rgba(255,255,255,0.8);
+    display: flex; align-items: center; gap: 12px;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .mission-card::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 4px;
+    border-radius: 4px 0 0 4px;
+  }
+  .mission-card.math::before { background: var(--coral); }
+  .mission-card.reading::before { background: var(--leaf-green); }
+  .mission-card.science::before { background: var(--sky-dark); }
+  .mission-card.art::before { background: var(--gold); }
+
+  .mission-card:hover { transform: translateX(4px) translateY(-2px); box-shadow: 0 8px 24px rgba(60,120,140,0.16); }
+
+  .mission-icon {
+    width: 44px; height: 44px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; flex-shrink: 0;
+  }
+  .mission-icon.math { background: linear-gradient(135deg, #FFE0DC, #FFBBB5); }
+  .mission-icon.reading { background: linear-gradient(135deg, #D4F5E4, #A8E6C3); }
+  .mission-icon.science { background: linear-gradient(135deg, #D4EDFF, #A8D8FF); }
+  .mission-icon.art { background: linear-gradient(135deg, #FFF3CC, #FFE580); }
+
+  .mission-info { flex: 1; }
+  .mission-name { font-size: 13px; font-weight: 800; margin-bottom: 4px; }
+  .mission-sub { font-size: 11px; color: var(--text-soft); font-weight: 600; }
+
+  .mission-progress { margin-top: 6px; }
+  .progress-track { height: 6px; background: #EEF3F8; border-radius: 99px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 99px; }
+  .progress-fill.math { background: linear-gradient(90deg, var(--coral), #FFB3AD); }
+  .progress-fill.reading { background: linear-gradient(90deg, var(--leaf-green), var(--mint)); }
+  .progress-fill.science { background: linear-gradient(90deg, var(--sky-dark), var(--sky)); }
+  .progress-fill.art { background: linear-gradient(90deg, var(--gold), var(--gold-light)); }
+
+  .mission-xp {
+    font-size: 11px; font-weight: 800;
+    color: var(--gold);
+    background: linear-gradient(135deg, #FFF3CC, #FFE580);
+    padding: 3px 8px; border-radius: 8px;
+    white-space: nowrap; flex-shrink: 0;
+  }
+
+  /* Shop items */
+  .shop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  .shop-card {
+    background: var(--card-bg);
+    border-radius: 18px;
+    padding: 14px 12px;
+    text-align: center;
+    box-shadow: var(--shadow-card);
+    border: 1.5px solid rgba(255,255,255,0.9);
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+  }
+  .shop-card:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(60,120,140,0.18); }
+
+  .shop-card .discount-badge {
+    position: absolute; top: -6px; right: -6px;
+    background: var(--coral); color: white;
+    font-size: 9px; font-weight: 900;
+    padding: 3px 7px; border-radius: 10px;
+    border: 2px solid white;
+  }
+
+  .shop-emoji { font-size: 36px; margin-bottom: 6px; display: block; }
+  .shop-name { font-size: 12px; font-weight: 800; margin-bottom: 2px; }
+  .shop-name-en { font-size: 10px; color: var(--text-soft); margin-bottom: 8px; }
+  .shop-price {
+    display: flex; align-items: center; justify-content: center; gap: 3px;
+    font-size: 13px; font-weight: 900; color: #8B6A00;
+  }
+  .shop-price .old { font-size: 10px; text-decoration: line-through; color: var(--text-soft); }
+  .shop-effects {
+    display: flex; justify-content: center; gap: 6px;
+    margin-top: 6px;
+  }
+  .effect-pill {
+    font-size: 9px; font-weight: 800;
+    padding: 2px 7px; border-radius: 8px;
+    color: white;
+  }
+  .effect-pill.energy { background: var(--mint-dark); }
+  .effect-pill.xp { background: var(--leaf-green); }
+
+  /* Achievement row */
+  .achievement-scroll {
+    display: flex; gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+  .achievement-scroll::-webkit-scrollbar { display: none; }
+
+  .ach-badge {
+    flex-shrink: 0;
+    width: 64px; height: 72px;
+    background: var(--card-bg);
+    border-radius: 16px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 4px;
+    box-shadow: var(--shadow-card);
+    font-size: 24px;
+    cursor: pointer;
+    transition: all 0.25s;
+    border: 1.5px solid rgba(255,255,255,0.9);
+  }
+  .ach-badge:hover { transform: scale(1.1) rotate(-3deg); }
+  .ach-badge.locked { opacity: 0.4; filter: grayscale(0.8); }
+  .ach-badge span { font-size: 9px; font-weight: 800; color: var(--text-soft); }
+
+  /* Shop banner */
+  .shop-banner {
+    border-radius: 18px;
+    padding: 14px 16px;
+    background: linear-gradient(135deg, #2E3B5E, #1A2E4A);
+    color: white;
+    display: flex; align-items: center; gap: 12px;
+    cursor: pointer;
+    transition: all 0.25s;
+    box-shadow: 0 6px 20px rgba(26,46,74,0.3);
+  }
+  .shop-banner:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(26,46,74,0.4); }
+  .shop-banner-text .title { font-size: 16px; font-weight: 900; }
+  .shop-banner-text .sub { font-size: 11px; opacity: 0.7; font-weight: 600; margin-top: 2px; }
+  .shop-arrow {
+    margin-left: auto;
+    width: 36px; height: 36px; border-radius: 12px;
+    background: rgba(255,255,255,0.15);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+
+  /* Level progress ring */
+  .level-ring-wrap {
+    display: flex; align-items: center; gap: 14px;
+    background: var(--card-bg);
+    border-radius: 20px;
+    padding: 14px 16px;
+    box-shadow: var(--shadow-card);
+  }
+
+  .level-ring {
+    width: 56px; height: 56px;
+    position: relative; flex-shrink: 0;
+  }
+  .level-ring svg { width: 56px; height: 56px; transform: rotate(-90deg); }
+  .level-ring .ring-bg { fill: none; stroke: #EEF3F8; stroke-width: 5; }
+  .level-ring .ring-fill { fill: none; stroke: url(#ringGrad); stroke-width: 5; stroke-linecap: round;
+    stroke-dasharray: 145; stroke-dashoffset: 43; }
+  .level-num {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 900; color: var(--navy);
+  }
+
+  .level-info .lv { font-size: 11px; color: var(--text-soft); font-weight: 700; }
+  .level-info .title { font-size: 14px; font-weight: 900; }
+  .level-info .xp-bar-wrap { width: 120px; height: 7px; background: #EEF3F8; border-radius: 99px; overflow: hidden; margin-top: 6px; }
+  .level-info .xp-fill { height: 100%; width: 70%; background: linear-gradient(90deg, var(--leaf-green), var(--mint)); border-radius: 99px; }
+  .level-info .xp-text { font-size: 10px; color: var(--text-soft); font-weight: 700; margin-top: 4px; }
+
+  /* Scrollbar */
+  .right-panel::-webkit-scrollbar { width: 4px; }
+  .right-panel::-webkit-scrollbar-track { background: transparent; }
+  .right-panel::-webkit-scrollbar-thumb { background: var(--mint-light); border-radius: 99px; }
+</style>
+</head>
+<body>
+
+<!-- Background blobs -->
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
+
+<!-- ── TOP NAV ── -->
+<nav class="topnav">
+  <div class="nav-left">
+    <div class="avatar-wrap">🎓<div class="badge">VIP</div></div>
+    <div class="student-info">
+      <div class="name">玩閱讀・林小明</div>
+      <div class="class">110-1 學生</div>
+    </div>
+  </div>
+
+  <div class="stat-pills">
+    <div class="stat-pill">
+      <span class="stat-label">⚡ 能量值</span>
+      <div class="stat-bar-wrap"><div class="stat-bar energy"></div></div>
+      <span class="stat-val">85</span>
+    </div>
+    <div class="stat-pill">
+      <span class="stat-label">😊 心情</span>
+      <div class="stat-bar-wrap"><div class="stat-bar mood"></div></div>
+      <span class="stat-val">開心</span>
+    </div>
+  </div>
+
+  <div class="nav-right">
+    <div class="coin-display">
+      <span class="coin-icon">🪙</span>
+      1,200
+    </div>
+    <button class="icon-btn">➕</button>
+    <button class="icon-btn">⚙️</button>
+  </div>
+</nav>
+
+<!-- ── MAIN LAYOUT ── -->
+<div class="main-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo-mark">Na<br>-Bo</div>
+
+    <div class="nav-icon active">🤖<span class="tooltip">AI 夥伴</span></div>
+    <div class="nav-icon">💬<span class="tooltip">聊天室</span></div>
+    <div class="nav-icon">🏆<span class="tooltip">成就</span></div>
+    <div class="nav-icon">📊<span class="tooltip">學習報告</span></div>
+    <div class="nav-icon">📚<span class="tooltip">課程</span></div>
+
+    <div style="flex:1"></div>
+    <div class="nav-icon">👨‍👩‍👧<span class="tooltip">家長觀察</span></div>
+  </aside>
+
+  <!-- CENTER STAGE -->
+  <main class="center-stage">
+    <div class="scene-bg"></div>
+
+    <div class="floating-star">⭐</div>
+    <div class="floating-star">✨</div>
+    <div class="floating-star">💫</div>
+
+    <div class="mascot-area">
+      <div class="speech-bubble">
+        嗨！今天要一起<br>完成數學任務嗎？🌟
+      </div>
+
+      <!-- Na-Bo mascot SVG -->
+      <svg class="mascot-svg" viewBox="0 0 200 230" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="bodyGrad" cx="50%" cy="40%" r="55%">
+            <stop offset="0%" stop-color="#FAFEFF"/>
+            <stop offset="100%" stop-color="#E0F4F0"/>
+          </radialGradient>
+          <radialGradient id="ringGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#6EDCCA"/>
+            <stop offset="100%" stop-color="#4CAF7D"/>
+          </radialGradient>
+          <filter id="softShadow">
+            <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#3DBFAD" flood-opacity="0.25"/>
+          </filter>
+        </defs>
+
+        <!-- Body -->
+        <ellipse cx="100" cy="135" rx="68" ry="80" fill="url(#bodyGrad)" filter="url(#softShadow)"/>
+
+        <!-- Shoulder pads -->
+        <ellipse cx="42" cy="118" rx="18" ry="14" fill="#2E3B5E" opacity="0.85"/>
+        <ellipse cx="158" cy="118" rx="18" ry="14" fill="#2E3B5E" opacity="0.85"/>
+
+        <!-- Leaf ears -->
+        <ellipse cx="80" cy="58" rx="10" ry="30" fill="#4CAF7D" transform="rotate(-20 80 58)"/>
+        <ellipse cx="120" cy="58" rx="10" ry="30" fill="#2E8B57" transform="rotate(20 120 58)"/>
+
+        <!-- Face -->
+        <circle cx="100" cy="110" r="46" fill="url(#bodyGrad)"/>
+
+        <!-- Eyes -->
+        <ellipse cx="84" cy="106" rx="8" ry="9" fill="#2B3A52"/>
+        <ellipse cx="116" cy="106" rx="8" ry="9" fill="#2B3A52"/>
+        <circle cx="87" cy="103" r="3" fill="white"/>
+        <circle cx="119" cy="103" r="3" fill="white"/>
+
+        <!-- Blush -->
+        <ellipse cx="72" cy="118" rx="9" ry="6" fill="#FFB3AD" opacity="0.5"/>
+        <ellipse cx="128" cy="118" rx="9" ry="6" fill="#FFB3AD" opacity="0.5"/>
+
+        <!-- Smile -->
+        <path d="M87 122 Q100 134 113 122" stroke="#2B3A52" stroke-width="3" stroke-linecap="round" fill="none"/>
+
+        <!-- Belly screen -->
+        <rect x="68" y="148" width="64" height="48" rx="14" fill="#E8F8F5" opacity="0.7"/>
+        <rect x="72" y="152" width="56" height="40" rx="10" fill="#B8F0E8" opacity="0.5"/>
+
+        <!-- Nabo logo on belly -->
+        <circle cx="100" cy="172" r="14" fill="white" opacity="0.7"/>
+        <text x="100" y="177" text-anchor="middle" fill="#4CAF7D" font-size="10" font-weight="900" font-family="Nunito">Na·Bo</text>
+
+        <!-- Feet -->
+        <ellipse cx="80" cy="212" rx="16" ry="9" fill="#D4EEF0"/>
+        <ellipse cx="120" cy="212" rx="16" ry="9" fill="#D4EEF0"/>
+      </svg>
+
+      <div class="companion">🌱</div>
+    </div>
+
+    <!-- Level ring display at bottom of center -->
+    <svg width="0" height="0">
+      <defs>
+        <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#6EDCCA"/>
+          <stop offset="100%" stop-color="#4CAF7D"/>
+        </linearGradient>
+      </defs>
+    </svg>
+  </main>
+
+  <!-- RIGHT PANEL -->
+  <aside class="right-panel">
+
+    <!-- Level ring -->
+    <div class="level-ring-wrap">
+      <div class="level-ring">
+        <svg viewBox="0 0 56 56">
+          <defs>
+            <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#6EDCCA"/>
+              <stop offset="100%" stop-color="#4CAF7D"/>
+            </linearGradient>
+          </defs>
+          <circle class="ring-bg" cx="28" cy="28" r="23" fill="none" stroke="#EEF3F8" stroke-width="5"/>
+          <circle cx="28" cy="28" r="23" fill="none" stroke="url(#rg)" stroke-width="5"
+            stroke-linecap="round"
+            stroke-dasharray="145"
+            stroke-dashoffset="43"
+            transform="rotate(-90 28 28)"
+          />
+        </svg>
+        <div class="level-num">12</div>
+      </div>
+      <div class="level-info">
+        <div class="lv">LEVEL</div>
+        <div class="title">🌿 知識探索者</div>
+        <div class="xp-bar-wrap"><div class="xp-fill"></div></div>
+        <div class="xp-text">2,450 / 3,500 XP</div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tab-row">
+      <div class="tab">💬 互動</div>
+      <div class="tab active">⚡ 能量值</div>
+      <div class="tab">🎯 任務</div>
+    </div>
+
+    <!-- Shop items -->
+    <div class="section-title">今日補給</div>
+    <div class="shop-grid">
+      <div class="shop-card">
+        <div class="discount-badge">-20%</div>
+        <span class="shop-emoji">🍫</span>
+        <div class="shop-name">巧克力片</div>
+        <div class="shop-name-en">Chocolate chips</div>
+        <div class="shop-price">
+          <span class="coin-icon" style="font-size:14px">🪙</span> 490
+          <span class="old">5000</span>
+        </div>
+        <div class="shop-effects">
+          <span class="effect-pill energy">能量+10</span>
+          <span class="effect-pill xp">經驗+20%</span>
+        </div>
+      </div>
+      <div class="shop-card">
+        <div class="discount-badge">-20%</div>
+        <span class="shop-emoji">☕</span>
+        <div class="shop-name">大杯拿鐵</div>
+        <div class="shop-name-en">Large Latte</div>
+        <div class="shop-price">
+          <span class="coin-icon" style="font-size:14px">🪙</span> 490
+          <span class="old">5000</span>
+        </div>
+        <div class="shop-effects">
+          <span class="effect-pill energy">能量+10</span>
+          <span class="effect-pill xp">經驗+20%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Today's missions -->
+    <div class="section-title">今日任務</div>
+
+    <div class="mission-card math">
+      <div class="mission-icon math">🔢</div>
+      <div class="mission-info">
+        <div class="mission-name">分數加減法</div>
+        <div class="mission-sub">數學・第3單元</div>
+        <div class="mission-progress">
+          <div class="progress-track"><div class="progress-fill math" style="width:65%"></div></div>
+        </div>
+      </div>
+      <div class="mission-xp">+120 XP</div>
+    </div>
+
+    <div class="mission-card reading">
+      <div class="mission-icon reading">📖</div>
+      <div class="mission-info">
+        <div class="mission-name">閱讀理解練習</div>
+        <div class="mission-sub">國語・短文閱讀</div>
+        <div class="mission-progress">
+          <div class="progress-track"><div class="progress-fill reading" style="width:90%"></div></div>
+        </div>
+      </div>
+      <div class="mission-xp">+80 XP</div>
+    </div>
+
+    <div class="mission-card science">
+      <div class="mission-icon science">🔬</div>
+      <div class="mission-info">
+        <div class="mission-name">自然觀察日記</div>
+        <div class="mission-sub">自然・生態探索</div>
+        <div class="mission-progress">
+          <div class="progress-track"><div class="progress-fill science" style="width:30%"></div></div>
+        </div>
+      </div>
+      <div class="mission-xp">+150 XP</div>
+    </div>
+
+    <div class="mission-card art">
+      <div class="mission-icon art">🎨</div>
+      <div class="mission-info">
+        <div class="mission-name">創意塗鴉挑戰</div>
+        <div class="mission-sub">藝術・主題繪畫</div>
+        <div class="mission-progress">
+          <div class="progress-track"><div class="progress-fill art" style="width:0%"></div></div>
+        </div>
+      </div>
+      <div class="mission-xp">+60 XP</div>
+    </div>
+
+    <!-- Achievements -->
+    <div class="section-title">成就徽章</div>
+    <div class="achievement-scroll">
+      <div class="ach-badge"><span>🏅</span><span>數學王</span></div>
+      <div class="ach-badge"><span>📚</span><span>書蟲</span></div>
+      <div class="ach-badge"><span>🔥</span><span>連勝王</span></div>
+      <div class="ach-badge locked"><span>🌟</span><span>滿分</span></div>
+      <div class="ach-badge locked"><span>🚀</span><span>進化者</span></div>
+    </div>
+
+    <!-- Shop CTA -->
+    <div class="shop-banner">
+      <span style="font-size:28px">🏪</span>
+      <div class="shop-banner-text">
+        <div class="title">商店 · SHOP</div>
+        <div class="sub">用金幣換取超值道具！</div>
+      </div>
+      <div class="shop-arrow">→</div>
+    </div>
+
+  </aside>
+</div>
+
+<script>
+  // Animate mission progress bars on load
+  document.addEventListener('DOMContentLoaded', () => {
+    const fills = document.querySelectorAll('.progress-fill');
+    fills.forEach(f => {
+      const w = f.style.width;
+      f.style.width = '0%';
+      setTimeout(() => { f.style.width = w; f.style.transition = 'width 1.2s cubic-bezier(0.34,1.56,0.64,1)'; }, 300);
+    });
+
+    // Tab switching
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // Nav icon switching
+    document.querySelectorAll('.nav-icon').forEach(icon => {
+      icon.addEventListener('click', function() {
+        document.querySelectorAll('.nav-icon').forEach(n => n.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // Shop card hover sparkle
+    document.querySelectorAll('.shop-card, .mission-card').forEach(card => {
+      card.addEventListener('click', function() {
+        this.style.transform = 'scale(0.97)';
+        setTimeout(() => { this.style.transform = ''; }, 150);
+      });
+    });
+  });
+</script>
+</body>
+</html>
