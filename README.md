@@ -1,7 +1,7 @@
 
-  # Untitled
+  # na-bo ai
 
-  This is a code bundle for Untitled. The original project is available at https://www.figma.com/design/40vtrsvLQfUOVQ0sUB5enT/Untitled.
+  This is a code bundle for na-bo ai. The original project is available at https://www.figma.com/design/40vtrsvLQfUOVQ0sUB5enT/na-bo-ai.
 
   ## Running the code
 

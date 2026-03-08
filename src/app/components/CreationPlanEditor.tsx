@@ -368,12 +368,22 @@ function PartCard({
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-        className={`rounded-b-[12px] border-2 border-t-0 transition-all p-1.5 ${
+        className={`relative rounded-b-[12px] border-2 border-t-0 transition-all p-1.5 ${
           isOver
             ? 'border-[#48A88B] bg-[#A8E0D0]/30'
             : 'border-[#3A648C]/20 bg-white/50'
         }`}
       >
+        {/* Transparent overlay when dragging — sits above SortableItems so drop
+            events aren't swallowed by SortableItem's stopPropagation */}
+        {isOver && (
+          <div
+            className="absolute inset-0 z-10 rounded-b-[12px]"
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={(e) => { e.stopPropagation(); handleDrop(e); }}
+          />
+        )}
         {part.items.length === 0 ? (
           <div
             className={`flex flex-col items-center justify-center gap-0.5 py-3 transition-all ${
