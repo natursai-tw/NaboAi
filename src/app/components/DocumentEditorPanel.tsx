@@ -30,7 +30,6 @@ export function DocumentEditorPanel({ onDocumentMode }: DocumentEditorPanelProps
   const editorRef = useRef<HTMLDivElement>(null);
   const [wordCount, setWordCount] = useState(0);
 
-  // Enter / exit document mode
   useEffect(() => {
     onDocumentMode?.(true);
     return () => { onDocumentMode?.(false); };
@@ -131,14 +130,6 @@ export function DocumentEditorPanel({ onDocumentMode }: DocumentEditorPanelProps
           </svg>
         </button>
         <div className="flex-1"/>
-        {/* Na-Bo 快速指令按鈕 */}
-        <button
-          title="請 Na-Bo 潤稿"
-          className="flex items-center gap-1 px-2 h-7 rounded-lg transition-all hover:scale-[1.04] active:scale-95"
-          style={{ background: 'linear-gradient(135deg,#48A88B,#3A648C)', color: '#fff', fontSize: 10, fontWeight: 700, boxShadow: '0 2px 8px rgba(72,168,139,0.3)' }}
-        >
-          ✨ 請 Na-Bo 潤稿
-        </button>
       </div>
 
       {/* ── Editor Body ── */}

@@ -37,84 +37,44 @@ export function HomePage({ onNavigateToChat, onNavigateToShop }: HomePageProps) 
     <>
       <style>{`
         @keyframes mascotFloat {
-          0%, 100% {
-            transform: translateY(0);
-          }
-          50% {
-            transform: translateY(-16px);
-          }
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-16px); }
         }
         @keyframes bubblePop {
-          from {
-            transform: scale(0.5);
-            opacity: 0;
-          }
-          to {
-            transform: scale(1);
-            opacity: 1;
-          }
+          from { transform: scale(0.5); opacity: 0; }
+          to { transform: scale(1); opacity: 1; }
         }
         @keyframes companionBounce {
-          0%, 100% {
-            transform: translateY(0) rotate(-5deg);
-          }
-          50% {
-            transform: translateY(-10px) rotate(5deg);
-          }
+          0%, 100% { transform: translateY(0) rotate(-5deg); }
+          50% { transform: translateY(-10px) rotate(5deg); }
         }
         @keyframes starFloat {
-          0%, 100% {
-            transform: translateY(0) rotate(0deg);
-            opacity: 0.7;
-          }
-          50% {
-            transform: translateY(-12px) rotate(20deg);
-            opacity: 1;
-          }
+          0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.7; }
+          50% { transform: translateY(-12px) rotate(20deg); opacity: 1; }
         }
-        .mascot-area {
-          animation: mascotFloat 4s ease-in-out infinite;
-        }
-        .speech-bubble {
-          animation: bubblePop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.3s both;
-        }
-        .companion {
-          animation: companionBounce 2s ease-in-out infinite;
-        }
-        .floating-star {
-          animation: starFloat 3s ease-in-out infinite;
-        }
-        .floating-star:nth-child(2) {
-          animation-delay: 1s;
-        }
-        .floating-star:nth-child(3) {
-          animation-delay: 2s;
-        }
+        .mascot-area { animation: mascotFloat 4s ease-in-out infinite; }
+        .speech-bubble { animation: bubblePop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.3s both; }
+        .companion { animation: companionBounce 2s ease-in-out infinite; }
+        .floating-star { animation: starFloat 3s ease-in-out infinite; }
+        .floating-star:nth-child(2) { animation-delay: 1s; }
+        .floating-star:nth-child(3) { animation-delay: 2s; }
       `}</style>
 
       {/* Center Stage */}
       <main className="flex flex-col items-center justify-center px-6 py-6 relative">
-        {/* Scene Background */}
         <div className="absolute inset-0 pointer-events-none" style={{
           background: 'radial-gradient(ellipse 60% 50% at 50% 100%, rgba(72,168,139,0.15) 0%, transparent 70%), radial-gradient(ellipse 40% 30% at 30% 80%, rgba(58,100,140,0.2) 0%, transparent 60%)'
         }}></div>
-
-        {/* Floor */}
         <div className="absolute bottom-0 left-0 right-0 h-[140px] bg-gradient-to-b from-transparent to-[#48A88B]/8 border-t-2 border-[#48A88B]/15"></div>
-
-        {/* Floating Stars */}
         <div className="floating-star absolute text-[18px] pointer-events-none" style={{ top: '15%', left: '15%', animationDelay: '0s' }}>⭐</div>
         <div className="floating-star absolute text-[14px] pointer-events-none" style={{ top: '25%', right: '20%', animationDelay: '1s' }}>✨</div>
         <div className="floating-star absolute text-[12px] pointer-events-none" style={{ bottom: '35%', left: '10%', animationDelay: '2s' }}>💫</div>
 
-        {/* Mascot Area */}
         <div className="mascot-area relative z-[2] flex flex-col items-center">
-          {/* Speech Bubble */}
           <div className="speech-bubble absolute -top-5 -right-[230px] bg-white rounded-[20px_20px_20px_4px] px-4 py-3 w-[220px] shadow-[0_8px_24px_rgba(60,120,140,0.15)] text-[12px] font-bold text-[#2B3A52] leading-[1.5]">
             {lines.map((line, i) => (
               <span key={i}>{line}{i < lines.length - 1 && <br />}</span>
             ))}
-            {/* Buttons */}
             <div className="flex gap-1.5 mt-2.5 w-[148px]">
               <button
                 onClick={onNavigateToChat}
@@ -132,10 +92,7 @@ export function HomePage({ onNavigateToChat, onNavigateToShop }: HomePageProps) 
             <div className="absolute -left-2.5 bottom-4 w-0 h-0 border-[6px] border-transparent border-r-white"></div>
           </div>
 
-          {/* Na-Bo Mascot SVG */}
           <img src={mascotImg} alt="Na-Bo 吉祥物" className="w-[200px] h-[220px] object-contain m-[0px]" style={{ filter: 'drop-shadow(0 20px 40px rgba(72,168,139,0.3))' }} />
-
-          {/* Companion */}
           <div className="companion absolute bottom-[30px] -left-[80px] text-[60px]">🌱</div>
         </div>
       </main>
@@ -143,18 +100,12 @@ export function HomePage({ onNavigateToChat, onNavigateToShop }: HomePageProps) 
       {/* Right Panel */}
       <aside className="bg-white/70 backdrop-blur-md border-l-[1.5px] border-[#48A88B]/20 p-5 pr-[18px] overflow-y-auto flex flex-col gap-4">
         <style>{`
-          .right-panel::-webkit-scrollbar {
-            width: 4px;
-          }
-          .right-panel::-webkit-scrollbar-track {
-            background: transparent;
-          }
-          .right-panel::-webkit-scrollbar-thumb {
-            background: #A8E0D0;
-            border-radius: 99px;
-          }
+          .right-panel::-webkit-scrollbar { width: 4px; }
+          .right-panel::-webkit-scrollbar-track { background: transparent; }
+          .right-panel::-webkit-scrollbar-thumb { background: #A8E0D0; border-radius: 99px; }
         `}</style>
         <div className="right-panel space-y-5">
+
           {/* Level Ring */}
           <div className="flex items-center gap-3.5 bg-white/85 rounded-[20px] px-4 py-3.5 shadow-[0_4px_20px_rgba(60,120,140,0.10)]">
             <div className="relative w-14 h-14 flex-shrink-0">
@@ -168,7 +119,7 @@ export function HomePage({ onNavigateToChat, onNavigateToShop }: HomePageProps) 
                 <circle cx="28" cy="28" r="23" fill="none" stroke="#EEF3F8" strokeWidth="5" />
                 <circle cx="28" cy="28" r="23" fill="none" stroke="url(#rg)" strokeWidth="5" strokeLinecap="round" strokeDasharray="145" strokeDashoffset="43" transform="rotate(-90 28 28)" />
               </svg>
-              <div className="absolute inset-0 flex items-center justify-center text-[16px] font-black text-[#3A648C]">12</div>
+              <div className="absolute inset-0 flex items-center justify-center text-[16px] font-black text-[#3A648C]">1</div>
             </div>
             <div>
               <div className="text-[11px] text-[#7A8BA0] font-bold">LEVEL 1</div>
@@ -182,19 +133,21 @@ export function HomePage({ onNavigateToChat, onNavigateToShop }: HomePageProps) 
 
           {/* Tabs */}
           <div className="flex gap-1.5 bg-[#48A88B]/10 rounded-2xl p-[5px]">
-            <div 
+            <div
               onClick={() => setActiveTab('interact')}
               className={`flex-1 py-2.5 text-center rounded-xl text-[12px] font-black cursor-pointer transition-all flex items-center justify-center gap-1 ${
                 activeTab === 'interact' ? 'bg-white text-[#3A648C] shadow-[0_3px_10px_rgba(60,120,140,0.12)]' : 'text-[#7A8BA0]'
               }`}>
               <img src={interactiveSvg} alt="互動" className="w-[18px] h-[18px]" /> 互動
             </div>
-            <div 
+            <div
               onClick={() => setActiveTab('energy')}
               className={`flex-1 py-2.5 text-center rounded-xl text-[12px] font-black cursor-pointer transition-all flex items-center justify-center gap-1 ${
                 activeTab === 'energy' ? 'bg-white text-[#3A648C] shadow-[0_3px_10px_rgba(60,120,140,0.12)]' : 'text-[#7A8BA0]'
-              }`}><img src={energySvg} alt="能量" className="w-[18px] h-[18px]" /> 能量值</div>
-            <div 
+              }`}>
+              <img src={energySvg} alt="能量" className="w-[18px] h-[18px]" /> 能量值
+            </div>
+            <div
               onClick={() => setActiveTab('missions')}
               className={`flex-1 py-2.5 text-center rounded-xl text-[12px] font-black cursor-pointer transition-all flex items-center justify-center gap-1 ${
                 activeTab === 'missions' ? 'bg-white text-[#3A648C] shadow-[0_3px_10px_rgba(60,120,140,0.12)]' : 'text-[#7A8BA0]'
@@ -211,6 +164,16 @@ export function HomePage({ onNavigateToChat, onNavigateToShop }: HomePageProps) 
                 <ShopCard emoji="🍫" name="巧克力片" nameEn="Chocolate chips" price="490" oldPrice="5000" discount="-20%" image={chocolateImg} />
                 <ShopCard emoji="☕" name="大杯拿鐵" nameEn="Large Latte" price="490" oldPrice="5000" discount="-20%" image={coffeeImg} />
               </div>
+              {/* Shop Banner */}
+              <div className="rounded-[18px] px-4 py-3.5 bg-white/85 border-[1.5px] border-white/90 flex items-center gap-3 cursor-pointer transition-all shadow-[0_6px_20px_rgba(60,120,140,0.10)] hover:translate-y-[-2px] hover:shadow-[0_10px_28px_rgba(60,120,140,0.16)]"
+                onClick={onNavigateToShop}>
+                <img src={shopStandImg} alt="商店" className="w-[70px] h-[70px] object-contain bg-white rounded-xl p-2" />
+                <div className="flex-1">
+                  <div className="text-[16px] font-black text-[#3A648C]">商店 · SHOP</div>
+                  <div className="text-[11px] text-[#7A8BA0] font-semibold mt-0.5">用金幣換取超值道具！</div>
+                </div>
+                <div className="w-9 h-9 rounded-xl bg-[#3A648C] flex items-center justify-center text-[18px] text-white">→</div>
+              </div>
             </>
           )}
 
@@ -222,6 +185,14 @@ export function HomePage({ onNavigateToChat, onNavigateToShop }: HomePageProps) 
               <MissionCard type="reading" icon="📖" name="閱讀理解練習" sub="國語短文閱讀" progress={90} xp="+80 XP" />
               <MissionCard type="science" icon="🔬" name="自然觀察日記" sub="自然・生態探索" progress={30} xp="+150 XP" />
               <MissionCard type="art" icon="🎨" name="創意塗鴉挑戰" sub="藝術・主題繪畫" progress={0} xp="+60 XP" />
+              <div className="text-[13px] font-black text-[#7A8BA0] uppercase tracking-widest">成就徽章</div>
+              <div className="flex gap-2.5 overflow-x-auto pb-1">
+                <AchievementBadge emoji="🏅" label="數學王" />
+                <AchievementBadge emoji="📚" label="書蟲" image={bookwormBadge} />
+                <AchievementBadge emoji="🔥" label="連勝王" image={streakBadge} />
+                <AchievementBadge emoji="🌟" label="滿分" locked />
+                <AchievementBadge emoji="🚀" label="進化者" locked />
+              </div>
             </>
           )}
 
@@ -242,26 +213,6 @@ export function HomePage({ onNavigateToChat, onNavigateToShop }: HomePageProps) 
             </>
           )}
 
-          {/* Achievements */}
-          <div className="text-[13px] font-black text-[#7A8BA0] uppercase tracking-widest">成就徽章</div>
-          <div className="flex gap-2.5 overflow-x-auto pb-1">
-            <AchievementBadge emoji="🏅" label="數學王" />
-            <AchievementBadge emoji="📚" label="書蟲" image={bookwormBadge} />
-            <AchievementBadge emoji="🔥" label="連勝王" image={streakBadge} />
-            <AchievementBadge emoji="🌟" label="滿分" locked />
-            <AchievementBadge emoji="🚀" label="進化者" locked />
-          </div>
-
-          {/* Shop Banner */}
-          <div className="rounded-[18px] px-4 py-3.5 bg-white/85 border-[1.5px] border-white/90 flex items-center gap-3 cursor-pointer transition-all shadow-[0_6px_20px_rgba(60,120,140,0.10)] hover:translate-y-[-2px] hover:shadow-[0_10px_28px_rgba(60,120,140,0.16)]"
-            onClick={onNavigateToShop}>
-            <img src={shopStandImg} alt="商店" className="w-[70px] h-[70px] object-contain bg-white rounded-xl p-2" />
-            <div className="flex-1">
-              <div className="text-[16px] font-black text-[#3A648C]">商店 · SHOP</div>
-              <div className="text-[11px] text-[#7A8BA0] font-semibold mt-0.5">用金幣換取超值道具！</div>
-            </div>
-            <div className="w-9 h-9 rounded-xl bg-[#3A648C] flex items-center justify-center text-[18px] text-white">→</div>
-          </div>
         </div>
       </aside>
     </>

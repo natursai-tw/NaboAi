@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import coinImg from 'figma:asset/ad9a0be0aca0271395664bfaea4a3c16732d1663.png';
+import coinBoImg from 'figma:asset/ad9a0be0aca0271395664bfaea4a3c16732d1663.png';
 
 type TabId = 'energy' | 'costume' | 'warehouse';
 
@@ -252,7 +253,7 @@ function ShopCard({
         {!isWarehouse ? (
           <>
             <div className="flex items-center gap-1">
-              <span className="text-base">🪙</span>
+              <span className="text-base"><img src={coinBoImg} alt="coin-bo" className="w-5 h-5 inline-block" /></span>
               <span className={`font-black text-[14px] ${canAfford ? 'text-[#3A648C]' : 'text-[#C0B0A0]'}`}>{item.price}</span>
             </div>
             {alreadyOwned ? (
