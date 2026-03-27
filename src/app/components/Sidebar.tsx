@@ -6,11 +6,17 @@ import reportIcon from 'figma:asset/67aa282455554d9e8f0bd60270b186303c8ed287.png
 import courseIcon from 'figma:asset/cc1c1bf9544c3438487602e4e3f94c91c63fce7c.png';
 import settingSvg from '../../imports/setting.svg';
 import shopBagSvg from '../../imports/shop-bag-1.svg';
+import Seed from '../../imports/Seed';
+
+// Teacher share icon (inline SVG as data URL)
+const teacherShareIcon = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='none' stroke='%2348A88B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='18' cy='5' r='3'/><circle cx='6' cy='12' r='3'/><circle cx='18' cy='19' r='3'/><line x1='8.59' y1='13.51' x2='15.42' y2='17.49'/><line x1='15.41' y1='6.51' x2='8.59' y2='10.49'/></svg>`;
 
 interface SidebarProps {
   activePage: string;
   onPageChange: (page: any) => void;
   onSettingsOpen: () => void;
+  onRoleChange?: (role: 'student' | 'teacher') => void;
+  role?: 'student' | 'teacher';
 }
 
 type NavItemDef = {
@@ -23,13 +29,14 @@ type NavItemDef = {
 };
 
 const ALL_ITEMS: NavItemDef[] = [
-  { id: 'home',     icon: image_4ad71c793313beb6be7d12942b6b5e3c0720a62b, tooltip: 'AI 夥伴',  page: 'home',     isImage: true },
-  { id: 'chat',     icon: chatIcon,     tooltip: '聊天室',   page: 'chat',     isImage: true },
-  { id: 'creative', icon: creativeIcon, tooltip: '創作工坊', page: 'creative', isImage: true },
-  { id: 'report',   icon: reportIcon,   tooltip: '學習報告', page: 'report',   isImage: true },
-  { id: 'course',   icon: courseIcon,   tooltip: '課程',     page: 'course',   isImage: true },
-  { id: 'shop',     icon: shopBagSvg,   tooltip: '商店',     page: 'shop',     isImage: true },
-  { id: 'settings', icon: settingSvg,   tooltip: '設定',     isImage: true, isSettings: true },
+  { id: 'home',          icon: image_4ad71c793313beb6be7d12942b6b5e3c0720a62b, tooltip: 'AI 夥伴',      page: 'home',          isImage: true },
+  { id: 'chat',          icon: chatIcon,       tooltip: '聊天室',     page: 'chat',          isImage: true },
+  { id: 'creative',      icon: creativeIcon,   tooltip: '創作工坊',   page: 'creative',      isImage: true },
+  { id: 'report',        icon: reportIcon,     tooltip: '學習報告',   page: 'report',        isImage: true },
+  { id: 'course',        icon: courseIcon,     tooltip: '課程',       page: 'course',        isImage: true },
+  { id: 'teacher-share', icon: teacherShareIcon, tooltip: 'AI 共創平台', page: 'teacher-share', isImage: true },
+  { id: 'shop',          icon: shopBagSvg,     tooltip: '商店',       page: 'shop',          isImage: true },
+  { id: 'settings',      icon: settingSvg,     tooltip: '設定',       isImage: true, isSettings: true },
 ];
 
 const ALL_IDS = ALL_ITEMS.map(i => i.id);
@@ -52,12 +59,19 @@ function loadOrder(): string[] {
   return [...ALL_IDS];
 }
 
-export function Sidebar({ activePage, onPageChange, onSettingsOpen }: SidebarProps) {
+export function Sidebar({ activePage, onPageChange, onSettingsOpen, onRoleChange, role: roleProp }: SidebarProps) {
   const [order, setOrder] = useState<string[]>(loadOrder);
   const [editMode, setEditMode] = useState(false);
   const [dragOverId, setDragOverId] = useState<string | null>(null);
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const dragId = useRef<string | null>(null);
+  const [role, setRole] = useState<'student' | 'teacher'>(roleProp ?? 'student');
+
+  const handleRoleToggle = () => {
+    const next = role === 'student' ? 'teacher' : 'student';
+    setRole(next);
+    onRoleChange?.(next);
+  };
 
   // HMR 熱更新時 React 會保留舊 state，導致新增的 id 不出現
   // 這個 effect 在 mount 後立即補入任何缺少的項目
@@ -118,6 +132,13 @@ export function Sidebar({ activePage, onPageChange, onSettingsOpen }: SidebarPro
   const renderItem = (item: NavItemDef) => {
     const isOver         = dragOverId === item.id;
     const isBeingDragged = draggingId === item.id;
+
+    // 學生版隱藏「AI 共創平台」
+    if (item.id === 'teacher-share' && role === 'student') return null;
+
+    // 老師版只保留「AI 共創平台」、「商店」、「設定」
+    const teacherAllowed = ['teacher-share', 'shop', 'settings'];
+    if (role === 'teacher' && !teacherAllowed.includes(item.id)) return null;
 
     return (
       <div
@@ -203,6 +224,31 @@ export function Sidebar({ activePage, onPageChange, onSettingsOpen }: SidebarPro
 
         {/* 下方 2 個項目 */}
         {bottomItems.map(renderItem)}
+
+        {/* 角色切換按鈕 */}
+        <div className="flex flex-col items-center gap-0.5 mt-0.5">
+          <button
+            onClick={handleRoleToggle}
+            title={role === 'student' ? '切換至老師版' : '切換至學生版'}
+            className={`relative w-[52px] h-[26px] rounded-full border transition-all duration-300 select-none overflow-hidden ${
+              role === 'teacher'
+                ? 'bg-gradient-to-r from-[#F3CC58] to-[#E8B84B] border-[#E8B84B]/60 shadow-[0_2px_8px_rgba(243,204,88,0.45)]'
+                : 'bg-gradient-to-r from-[#3A648C] to-[#48A88B] border-[#48A88B]/40 shadow-[0_2px_8px_rgba(72,168,139,0.3)]'
+            }`}
+          >
+            {/* sliding knob */}
+            <span className={`absolute top-[3px] w-[20px] h-[20px] rounded-full bg-white shadow-sm transition-all duration-300 flex items-center justify-center text-[10px] ${
+              role === 'teacher' ? 'left-[28px]' : 'left-[3px]'
+            }`}>
+              {role === 'teacher' ? '👩‍🏫' : '🎓'}
+            </span>
+          </button>
+          <span className={`text-[9px] font-black tracking-wide transition-colors duration-200 ${
+            role === 'teacher' ? 'text-[#B8880A]' : 'text-[#3A648C]'
+          }`}>
+            {role === 'teacher' ? '老師版' : '學生版'}
+          </span>
+        </div>
       </aside>
     </>
   );
@@ -230,7 +276,9 @@ function NavIcon({
       `}
     >
       {isImage ? (
-        <img src={icon} alt={tooltip} className="w-8 h-8 object-contain pointer-events-none" />
+        icon === teacherShareIcon
+          ? <div className="w-8 h-8 pointer-events-none relative"><Seed /></div>
+          : <img src={icon} alt={tooltip} className="w-8 h-8 object-contain pointer-events-none" />
       ) : (
         <span className="pointer-events-none">{icon}</span>
       )}

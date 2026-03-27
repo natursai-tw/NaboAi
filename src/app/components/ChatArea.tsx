@@ -5,6 +5,8 @@ import exampleImg from 'figma:asset/b7008577ff8399464e36a154dc2603ec45a4101d.png
 import micIcon from '../../imports/mic.svg';
 import audioIcon from '../../imports/audio.svg';
 import { ScratchTeachingView } from './ScratchTeachingView';
+import { pinyin } from 'pinyin-pro';
+import { fromPinyin } from 'zhuyin';
 
 interface Message {
   id: number;
@@ -20,6 +22,61 @@ interface ChatAreaProps {
   scratchMode?: boolean;
   onExitScratch?: () => void;
 }
+
+// ── Convert text to zhuyin-annotated HTML ────────────────────────────────────
+function textToZhuyin(htmlText: string): string {
+  if (!htmlText) return '';
+  
+  // Process text while preserving HTML tags
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = htmlText;
+  
+  function processNode(node: Node): void {
+    if (node.nodeType === Node.TEXT_NODE) {
+      const text = node.textContent || '';
+      if (!text.trim()) return;
+      
+      // Build ruby HTML
+      let rubyHtml = '';
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        
+        // Skip non-Chinese characters
+        if (!/[\u4e00-\u9fa5]/.test(char)) {
+          rubyHtml += char;
+        } else {
+          try {
+            // Get pinyin for this character first (with number tones)
+            const pinyinResult = pinyin(char, { toneType: 'num' });
+            console.log(`Character: ${char}, Pinyin: ${pinyinResult}`);
+            
+            // Convert pinyin to zhuyin
+            const zhuyinArray = fromPinyin(pinyinResult, false);
+            const zhuyinResult = Array.isArray(zhuyinArray) ? zhuyinArray.join('') : zhuyinArray;
+            console.log(`Zhuyin result:`, zhuyinResult);
+            
+            rubyHtml += `<ruby>${char}<rt>${zhuyinResult}</rt></ruby>`;
+          } catch (error) {
+            console.error(`Error converting ${char}:`, error);
+            rubyHtml += char;
+          }
+        }
+      }
+      
+      const span = document.createElement('span');
+      span.innerHTML = rubyHtml;
+      node.parentNode?.replaceChild(span, node);
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      // Recursively process child nodes
+      const childNodes = Array.from(node.childNodes);
+      childNodes.forEach(child => processNode(child));
+    }
+  }
+  
+  processNode(tempDiv);
+  return tempDiv.innerHTML;
+}
+// ─────────────────────────────────────────────────────────────────────────────
 
 // ── Native-drag wrapper (replaces react-dnd useDrag) ─────────────────────────
 interface DraggableMessageProps {
@@ -89,6 +146,7 @@ export function ChatArea({ onSendMessage, scratchMode = false, onExitScratch }: 
   const [input, setInput] = useState('');
   const [isVoiceActive, setIsVoiceActive] = useState(false);
   const [isAudioActive, setIsAudioActive] = useState(true);
+  const [zhuyinEnabledMessages, setZhuyinEnabledMessages] = useState<Set<number>>(new Set());
   const chatWindowRef = useRef<HTMLDivElement>(null);
   const hasInitialResponseRef = useRef(false);
 
@@ -266,6 +324,18 @@ export function ChatArea({ onSendMessage, scratchMode = false, onExitScratch }: 
           background: #A8E0D0;
           border-radius: 99px;
         }
+        ruby {
+          ruby-position: over;
+        }
+        rt {
+          font-size: 0.5em;
+          color: #48A88B;
+          font-weight: 600;
+          line-height: 1;
+        }
+        .chat-bubble-text {
+          letter-spacing: 0.08em;
+        }
         @keyframes msgSlide {
           from {
             transform: translateY(20px);
@@ -374,11 +444,36 @@ export function ChatArea({ onSendMessage, scratchMode = false, onExitScratch }: 
                     </div>
                     <div>
                       <DraggableMessage message={message}>
-                        <div className={`max-w-full px-[14px] py-[10px] rounded-[20px] text-[14px] font-semibold leading-[1.65] relative ${
+                        <div className={`max-w-full px-[14px] py-[10px] rounded-[20px] text-[14px] font-semibold leading-[1.65] relative group ${ 
                           message.type === 'bot'
                             ? 'bg-white/92 border-[1.5px] border-[#48A88B]/20 rounded-bl-md shadow-[0_4px_16px_rgba(60,120,140,0.08)] text-[#2B3A52]'
                             : 'bg-gradient-to-br from-[#3A648C] to-[#2A4A6C] text-white rounded-br-md shadow-[0_4px_16px_rgba(58,100,140,0.25)]'
-                        }`} dangerouslySetInnerHTML={{ __html: message.text || '' }}></div>
+                        }`}>
+                          {/* Zhuyin Toggle Button */}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setZhuyinEnabledMessages(prev => {
+                                const newSet = new Set(prev);
+                                if (newSet.has(message.id)) {
+                                  newSet.delete(message.id);
+                                } else {
+                                  newSet.add(message.id);
+                                }
+                                return newSet;
+                              });
+                            }}
+                            className={`absolute -top-2 -right-2 w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold transition-all shadow-[0_2px_8px_rgba(60,120,140,0.2)] ${
+                              zhuyinEnabledMessages.has(message.id) 
+                                ? 'bg-[#48A88B] text-white hover:bg-[#3A8B73]' 
+                                : 'bg-white border-[1.5px] border-[#48A88B]/30 text-[#48A88B] hover:bg-[#F0F0F0]'
+                            }`}
+                            title={zhuyinEnabledMessages.has(message.id) ? '關閉注音' : '開啟注音'}
+                          >
+                            ㄅ
+                          </button>
+                          <div className="chat-bubble-text" dangerouslySetInnerHTML={{ __html: zhuyinEnabledMessages.has(message.id) ? textToZhuyin(message.text || '') : message.text || '' }}></div>
+                        </div>
                       </DraggableMessage>
                       {message.image && (
                         <DraggableMessage message={message} isImageOnly={true}>

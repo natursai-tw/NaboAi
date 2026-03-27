@@ -18,12 +18,13 @@ import { OnlineCourseRoom } from './components/OnlineCourseRoom';
 import { SettingsModal } from './components/SettingsModal';
 import { ShopPage } from './components/ShopPage';
 import { NotificationPage } from './components/NotificationPage';
+import { TeacherAISharePage } from './components/TeacherAISharePage';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<
     'home' | 'chat' | 'creative' | 'text-to-image' | 'image-to-image' |
     'report' | 'course' | 'online-browse' | 'online-lobby' | 'online-room' | 'shop' | 'notification' |
-    'login' | 'register' | 'forgot-password'
+    'login' | 'register' | 'forgot-password' | 'teacher-share'
   >('home');
   const [isHistoryOpen, setIsHistoryOpen] = useState(true);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -208,6 +209,8 @@ export default function App() {
                 <CoursePage onCourseSelect={handleCourseSelect} />
               ) : currentPage === 'shop' ? (
                 <ShopPage />
+              ) : currentPage === 'teacher-share' ? (
+                <TeacherAISharePage onBack={() => setCurrentPage('home')} />
               ) : currentPage === 'online-browse' ? (
                 <OnlineCourseBrowse onBack={() => setCurrentPage('course')} onCourseSelect={() => {}} />
               ) : currentPage === 'online-lobby' ? (

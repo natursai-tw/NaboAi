@@ -101,11 +101,7 @@ export function ShopPage() {
       {/* Toast */}
       {toast && (
         <div
-          className={`fixed top-[90px] left-1/2 -translate-x-1/2 z-[200] px-5 py-2.5 rounded-2xl shadow-xl text-white text-[13px] font-bold transition-all backdrop-blur-md ${
-            toast.type === 'success'
-              ? 'bg-gradient-to-r from-[#48A88B] to-[#3A648C]'
-              : 'bg-gradient-to-r from-[#E05C5C] to-[#C04040]'
-          }`}
+          className={`fixed top-[90px] left-1/2 -translate-x-1/2 z-[200] px-5 py-2.5 rounded-2xl shadow-xl text-white text-[13px] font-bold transition-all backdrop-blur-md bg-[#3A648C]`}
         >
           {toast.msg}
         </div>
@@ -138,7 +134,7 @@ export function ShopPage() {
               onClick={() => { setActiveTab(tab.id); setActiveTag('全部'); }}
               className={`flex items-center gap-1.5 px-5 py-2 rounded-xl text-[13px] font-black transition-all duration-200 ${
                 activeTab === tab.id
-                  ? 'bg-gradient-to-br from-[#3A648C] to-[#48A88B] text-white shadow-[0_4px_12px_rgba(58,100,140,0.30)]'
+                  ? 'bg-[#3A648C] text-white shadow-[0_4px_12px_rgba(58,100,140,0.30)]'
                   : 'text-[#3A648C] hover:bg-white/70'
               }`}
             >
@@ -157,7 +153,7 @@ export function ShopPage() {
             onClick={() => setActiveTag(tag)}
             className={`px-3.5 py-1 rounded-full text-[12px] font-bold transition-all duration-150 ${
               activeTag === tag
-                ? 'bg-[#48A88B] text-white shadow-sm'
+                ? 'bg-[#3A648C] text-white shadow-sm'
                 : 'bg-white/70 text-[#3A648C] border border-[#3A648C]/15 hover:bg-white'
             }`}
           >
@@ -264,7 +260,7 @@ function ShopCard({
                 disabled={!canAfford}
                 className={`text-[11px] font-black px-3 py-1.5 rounded-xl transition-all duration-150 ${
                   canAfford
-                    ? 'bg-gradient-to-br from-[#48A88B] to-[#3A648C] text-white hover:shadow-[0_4px_12px_rgba(72,168,139,0.4)] hover:scale-105 active:scale-95'
+                    ? 'bg-[#3A648C] text-white hover:shadow-[0_4px_12px_rgba(72,168,139,0.4)] hover:scale-105 active:scale-95'
                     : 'bg-[#E8EFF5] text-[#B0C4D4] cursor-not-allowed'
                 }`}
               >
