@@ -1,4 +1,19 @@
 import { useState, useEffect } from 'react';
+import { addToCanvas, subscribeCanvasActive } from './creativeEditorBridge';
+
+// ─── Source panel mock data ───────────────────────────────────────────────────
+const MOCK_CHAT = [
+  { id: 's1', type: 'chat-bot' as const, content: '嗨！今天要一起完成數學任務嗎？🌟', label: 'Na-Bo 訊息' },
+  { id: 's2', type: 'chat-user' as const, content: '好的！我想學分數加減法。', label: '你的訊息' },
+  { id: 's3', type: 'chat-bot' as const, content: '分數加減法的關鍵是找公分母！\n例如：1/2 + 1/3 = 3/6 + 2/6 = 5/6 ✨', label: 'Na-Bo 說明' },
+  { id: 's4', type: 'chat-user' as const, content: '那 2/5 + 1/3 呢？', label: '你的提問' },
+  { id: 's5', type: 'chat-bot' as const, content: '2/5 + 1/3 = 6/15 + 5/15 = 11/15 🎉\n你學得很快！', label: 'Na-Bo 解答' },
+];
+
+const MOCK_IMAGES = [
+  { id: 'img1', url: 'https://images.unsplash.com/photo-1727522974621-c64b5ea90c0b?w=300&q=80', label: '學習筆記' },
+  { id: 'img2', url: 'https://images.unsplash.com/photo-1554103210-26d928978fb5?w=300&q=80', label: '便利貼牆' },
+];
 
 interface HistoryItem {
   id: number;
@@ -16,12 +31,19 @@ interface HistoryPanelProps {
 
 export function HistoryPanel({ isOpen, onToggle, scratchMode, onChatSelect }: HistoryPanelProps) {
   const [activeId, setActiveId] = useState(3);
+  const [canvasActive, setCanvasActive] = useState(false);
+  const [sourceTab, setSourceTab] = useState<'chat' | 'images'>('chat');
 
   // 進入 Scratch 模式時取消選取
   useEffect(() => {
     if (scratchMode) setActiveId(-1);
   }, [scratchMode]);
-  
+
+  // Subscribe to canvas mount/unmount via bridge
+  useEffect(() => {
+    return subscribeCanvasActive(setCanvasActive);
+  }, []);
+
   const historyItems: HistoryItem[] = [
     { id: 1, date: '12/1', preview: '😊 開心事', year: '2025年' },
     { id: 2, date: '1/1', preview: '💪 健康', year: '2026年' },
@@ -56,7 +78,7 @@ export function HistoryPanel({ isOpen, onToggle, scratchMode, onChatSelect }: Hi
         </svg>
       </button>
 
-      <div className="history-panel mt-8">
+      <div className="history-panel mt-8 flex flex-col" style={{ minHeight: 0 }}>
         {/* 新對話按鈕 */}
         <button
           onClick={() => { setActiveId(-1); onChatSelect?.(); }}
@@ -95,6 +117,11 @@ export function HistoryPanel({ isOpen, onToggle, scratchMode, onChatSelect }: Hi
             </div>
           );
         })}
+
+        {/* ── 素材庫 — shown when CreativeEditorPage (canvas) is active ── */}
+        {canvasActive && (
+          null
+        )}
       </div>
     </aside>
   );

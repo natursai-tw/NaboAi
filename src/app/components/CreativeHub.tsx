@@ -1,17 +1,17 @@
 import { useState } from 'react';
 import { CreationPlanEditor } from './CreationPlanEditor';
-import { DocumentEditorPanel } from './DocumentEditorPanel';
+import { CreativeEditorPage } from './CreativeEditorPage';
 import movieSvg from '../../imports/movie.svg';
-import bookSvg from '../../imports/book.svg';
 import gameSvg from '../../imports/game.svg';
+import imageSvg from '../../imports/image.svg';
 
-type HubTab = 'frame' | 'document' | 'scratch';
+type HubTab = 'frame' | 'scratch' | 'canvas';
 type HubState = HubTab | 'home';
 
 const TABS: { id: HubTab; label: string; icon: string; desc: string; accent: string; bg: string }[] = [
-  { id: 'frame',    label: '創作影格', icon: movieSvg, desc: 'NA-BO 影格腳本編輯器',  accent: '#3A648C', bg: 'rgba(58,100,140,0.09)' },
-  { id: 'document', label: '文件格式', icon: bookSvg,  desc: '多格式文件撰寫工具',    accent: '#48A88B', bg: 'rgba(72,168,139,0.09)' },
-  { id: 'scratch',  label: '學習程式', icon: gameSvg,  desc: 'Scratch 積木程式學習',  accent: '#F3A020', bg: 'rgba(243,160,32,0.09)'  },
+  { id: 'frame',  label: '創作影格', icon: movieSvg, desc: 'NA-BO 影格腳本編輯器',  accent: '#3A648C', bg: 'rgba(58,100,140,0.09)' },
+  { id: 'scratch', label: '學習程式', icon: gameSvg,  desc: 'Scratch 積木程式學習',  accent: '#F3A020', bg: 'rgba(243,160,32,0.09)'  },
+  { id: 'canvas',  label: '創作編輯', icon: imageSvg, desc: '白板排版，自由創作',    accent: '#A855F7', bg: 'rgba(168,85,247,0.09)'  },
 ];
 
 /* ────── Scratch 積木教學環境 ────── */
@@ -314,7 +314,12 @@ function SubPageHeader({ tab, onBack }: { tab: HubTab; onBack: () => void }) {
 }
 
 /* ────── Main Hub ────── */
-export function CreativeHub({ onScratchMode, onDocumentMode }: { onScratchMode?: () => void; onDocumentMode?: (active: boolean) => void }) {
+export function CreativeHub({ onScratchMode, onDocumentMode, isFullscreen, onFullscreenChange }: { 
+  onScratchMode?: () => void; 
+  onDocumentMode?: (active: boolean) => void;
+  isFullscreen?: boolean;
+  onFullscreenChange?: (isFullscreen: boolean) => void;
+}) {
   const [activeTab, setActiveTab] = useState<HubState>('home');
 
   return (
@@ -325,8 +330,13 @@ export function CreativeHub({ onScratchMode, onDocumentMode }: { onScratchMode?:
         <>
           <SubPageHeader tab={activeTab as HubTab} onBack={() => setActiveTab('home')} />
           <div className="flex-1 min-h-0 overflow-hidden">
-            {activeTab === 'frame'    && <CreationPlanEditor />}
-            {activeTab === 'document' && <DocumentEditorPanel onDocumentMode={onDocumentMode} />}
+            {activeTab === 'frame'  && <CreationPlanEditor />}
+            {activeTab === 'canvas' && (
+              <CreativeEditorPage 
+                isFullscreen={isFullscreen}
+                onFullscreenChange={onFullscreenChange}
+              />
+            )}
           </div>
         </>
       )}

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import mascotImg from 'figma:asset/559cfa23c202ae2bafadecf045b5807d0bdfb1e6.png';
+import mascotWaveImg from 'figma:asset/d1cf85227bd9e180b200c81d30724a49bb9741ba.png';
 import chocolateImg from 'figma:asset/47ad7cf5ba2895388d173a0f9841851e83caaa84.png';
 import coffeeImg from 'figma:asset/74d5123ae06057f7f116885d7f85cc78ca3a4507.png';
 import crownBadge from 'figma:asset/3a1d0e7f95912ca2837579221fab3af62c0f4862.png';
@@ -27,6 +28,12 @@ interface HomePageProps {
 export function HomePage({ onNavigateToChat, onNavigateToShop }: HomePageProps) {
   const [activeTab, setActiveTab] = useState<'interact' | 'energy' | 'missions'>('energy');
   const [msgIndex, setMsgIndex] = useState(0);
+  const [isWaving, setIsWaving] = useState(false);
+
+  const handleWave = () => {
+    setIsWaving(true);
+    setTimeout(() => setIsWaving(false), 3000);
+  };
 
   const handleNope = () => {
     setMsgIndex(i => (i + 1) % MASCOT_MESSAGES.length);
@@ -92,7 +99,13 @@ export function HomePage({ onNavigateToChat, onNavigateToShop }: HomePageProps) 
             <div className="absolute -left-2.5 bottom-4 w-0 h-0 border-[6px] border-transparent border-r-white"></div>
           </div>
 
-          <img src={mascotImg} alt="Na-Bo 吉祥物" className="w-[200px] h-[220px] object-contain m-[0px]" style={{ filter: 'drop-shadow(0 20px 40px rgba(72,168,139,0.3))' }} />
+          <img
+            key={isWaving ? 'waving' : 'normal'}
+            src={isWaving ? mascotWaveImg : mascotImg}
+            alt="Na-Bo 吉祥物"
+            className="w-[200px] h-[220px] object-contain m-[0px]"
+            style={{ filter: 'drop-shadow(0 20px 40px rgba(72,168,139,0.3))' }}
+          />
           <div className="companion absolute bottom-[30px] -left-[80px] text-[60px]">🌱</div>
         </div>
       </main>
@@ -201,7 +214,7 @@ export function HomePage({ onNavigateToChat, onNavigateToShop }: HomePageProps) 
             <>
               <div className="text-[13px] font-black text-[#7A8BA0] uppercase tracking-widest">互動動作</div>
               <div className="grid grid-cols-2 gap-2.5">
-                <InteractCard emoji="👋" name="揮手" desc="向 Na-Bo 打招呼" />
+                <InteractCard emoji="👋" name="揮手" desc="向 Na-Bo 打招呼" onClick={handleWave} />
                 <InteractCard emoji="✊" name="猜拳" desc="剪刀石頭布！" />
                 <InteractCard emoji="🤗" name="打招呼" desc="來個溫暖的問候" />
                 <InteractCard emoji="🙌" name="擊掌" desc="太棒了！" />
@@ -300,9 +313,10 @@ function AchievementBadge({ emoji, label, locked, image }: { emoji: string; labe
   );
 }
 
-function InteractCard({ emoji, name, desc }: { emoji: string; name: string; desc: string }) {
+function InteractCard({ emoji, name, desc, onClick }: { emoji: string; name: string; desc: string; onClick?: () => void }) {
   return (
     <div
+      onClick={onClick}
       className="relative bg-[#F5F6F8] rounded-[18px] px-3 py-6 text-center cursor-pointer transition-all hover:translate-y-[-4px] hover:shadow-[0_12px_30px_rgba(60,120,140,0.18)] hover:bg-white group aspect-square flex flex-col items-center justify-center gap-2"
     >
       <span className="text-[40px] block transition-transform group-hover:scale-110">{emoji}</span>

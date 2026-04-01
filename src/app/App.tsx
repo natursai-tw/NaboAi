@@ -30,6 +30,7 @@ export default function App() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [scratchMode, setScratchMode] = useState(false);
   const [documentMode, setDocumentMode] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   // Resizable panel state — localStorage per mode
   const getStoredWidth = (mode: 'normal' | 'scratch' | 'document') => {
@@ -101,14 +102,15 @@ export default function App() {
     ? `80px ${historyWidth}px 1fr 6px ${quickPanelWidth}px`
     : `80px 1fr 6px ${quickPanelWidth}px`;
 
-  const layoutClass =
-    (['text-to-image', 'image-to-image', 'online-room', 'notification'] as string[]).includes(currentPage)
-      ? 'relative z-[1] h-[calc(100vh-74px)]'
-      : currentPage === 'home'
-      ? 'relative z-[1] grid grid-cols-[80px_1fr_340px] h-[calc(100vh-74px)]'
-      : currentPage === 'chat'
-      ? 'relative z-[1] grid h-[calc(100vh-74px)]'
-      : 'relative z-[1] grid grid-cols-[80px_1fr] h-[calc(100vh-74px)]';
+  const layoutClass = isFullscreen
+    ? 'relative z-[1] h-screen'
+    : (['text-to-image', 'image-to-image', 'online-room', 'notification'] as string[]).includes(currentPage)
+    ? 'relative z-[1] h-[calc(100vh-74px)]'
+    : currentPage === 'home'
+    ? 'relative z-[1] grid grid-cols-[80px_1fr_340px] h-[calc(100vh-74px)]'
+    : currentPage === 'chat'
+    ? 'relative z-[1] grid h-[calc(100vh-74px)]'
+    : 'relative z-[1] grid grid-cols-[80px_1fr] h-[calc(100vh-74px)]';
 
   return (
     <>
@@ -143,10 +145,12 @@ export default function App() {
         <div className="blob blob-2" />
         <div className="blob blob-3" />
 
-        <TopNav
-          onNotificationClick={() => setCurrentPage('notification')}
-          logoOnly={['login', 'register', 'forgot-password'].includes(currentPage)}
-        />
+        {!isFullscreen && (
+          <TopNav
+            onNotificationClick={() => setCurrentPage('notification')}
+            logoOnly={['login', 'register', 'forgot-password'].includes(currentPage)}
+          />
+        )}
 
         {currentPage === 'login' ? (
           <LoginPage
@@ -256,6 +260,8 @@ export default function App() {
                     onExitScratch={() => setScratchMode(false)}
                     onDocumentMode={(active) => setDocumentMode(active)}
                     documentMode={documentMode}
+                    isFullscreen={isFullscreen}
+                    onFullscreenChange={setIsFullscreen}
                   />
                 </>
               )}

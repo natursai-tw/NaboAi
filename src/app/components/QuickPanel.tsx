@@ -7,9 +7,11 @@ interface QuickPanelProps {
   onExitScratch?: () => void;
   onDocumentMode?: (active: boolean) => void;
   documentMode?: boolean;
+  isFullscreen?: boolean;
+  onFullscreenChange?: (isFullscreen: boolean) => void;
 }
 
-export function QuickPanel({ onScratchMode, scratchMode, onExitScratch, onDocumentMode }: QuickPanelProps) {
+export function QuickPanel({ onScratchMode, scratchMode, onExitScratch, onDocumentMode, documentMode, isFullscreen, onFullscreenChange }: QuickPanelProps) {
   return (
     <aside className="p-0 overflow-y-auto w-full h-full">
       <style>{`.quick-panel::-webkit-scrollbar { display: none; }`}</style>
@@ -88,7 +90,14 @@ export function QuickPanel({ onScratchMode, scratchMode, onExitScratch, onDocume
             </div>
           </div>
         ) : (
-          <CreativeHub onScratchMode={onScratchMode} onDocumentMode={onDocumentMode} />
+          <div style={{ width: '100%', height: '100%', overflow: 'hidden', display: 'flex', flexDirection: 'column', touchAction: 'none', userSelect: 'none' }}>
+            <CreativeHub 
+              onScratchMode={onScratchMode} 
+              onDocumentMode={onDocumentMode}
+              isFullscreen={isFullscreen}
+              onFullscreenChange={onFullscreenChange}
+            />
+          </div>
         )}
       </div>
     </aside>

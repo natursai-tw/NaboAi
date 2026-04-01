@@ -1,3 +1,6 @@
+import User from '../../imports/User-360-13';
+import Heart from '../../imports/Heart';
+import Eye from '../../imports/Eye';
 import { useState, useRef, useCallback } from "react";
 
 interface CreativePageProps {
@@ -399,7 +402,7 @@ function UploadModal({
             {/* Tips */}
             <div className="rounded-xl p-3 flex flex-col gap-1.5" style={{ background: "rgba(72,168,139,0.08)", border: "1px solid rgba(72,168,139,0.15)" }}>
               <p className="text-[11px] font-black text-[#2A7A60]">📋 投稿須知</p>
-              {["封面圖片和主題為必填欄位", "上 HTML 檔���後，瀏覽者可直接互動體驗", "作品上傳後將進入審核，通過後公開展示"].map((tip, i) => (
+              {["封面圖片和主題為必填欄位", "上 HTML 檔後，瀏覽者可直接互動體驗", "作品上傳後將進入審核，通過後公開展示"].map((tip, i) => (
                 <div key={i} className="flex items-start gap-1.5">
                   <span className="text-[#48A88B] text-[10px] font-bold mt-px">•</span>
                   <span className="text-[11px] text-[#3A7A65] leading-relaxed">{tip}</span>
@@ -699,15 +702,15 @@ export function CreativePage({
                     </p>
                     <div className="flex items-center justify-between text-[11px] font-bold text-[#7A8BA0] mb-2">
                       <span className="flex items-center gap-1">
-                        👤 {work.author}
+                        <span className="inline-block w-4 h-4 relative"><User /></span> {work.author}
                       </span>
                     </div>
                     <div className="flex items-center gap-3 text-[11px] font-bold text-[#7A8BA0]">
                       <span className="flex items-center gap-1">
-                        ❤️ {work.likes}
+                        <span className="inline-block w-4 h-4 relative"><Heart /></span> {work.likes}
                       </span>
                       <span className="flex items-center gap-1">
-                        👁️ {work.views}
+                        <span className="inline-block w-4 h-4 relative"><Eye /></span> {work.views}
                       </span>
                     </div>
                   </div>
@@ -781,14 +784,14 @@ export function CreativePage({
               {/* Stats */}
               <div className="flex gap-4 mb-6">
                 <div className="flex-1 bg-gradient-to-br from-[#FFE0E0] to-[#FFB8B8] rounded-[16px] px-4 py-3 flex items-center gap-2">
-                  <span className="text-[24px]">❤️</span>
+                  <span className="inline-block w-6 h-6 relative"><Heart /></span>
                   <div>
                     <div className="text-[11px] text-[#7A8BA0] font-bold">喜歡數</div>
                     <div className="text-[18px] font-black text-[#FF6B6B]">{selectedWork.likes}</div>
                   </div>
                 </div>
                 <div className="flex-1 bg-gradient-to-br from-[#E0E8FF] to-[#B8CAFF] rounded-[16px] px-4 py-3 flex items-center gap-2">
-                  <span className="text-[24px]">👁️</span>
+                  <span className="inline-block w-6 h-6 relative"><Eye /></span>
                   <div>
                     <div className="text-[11px] text-[#7A8BA0] font-bold">觀看數</div>
                     <div className="text-[18px] font-black text-[#5B7FDB]">{selectedWork.views}</div>
